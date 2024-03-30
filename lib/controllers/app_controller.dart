@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:app_finanzas/models/user.dart';
+import 'package:app_finanzas/models/transaction.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppController {
@@ -47,5 +48,29 @@ class AppController {
   void addIncome(String name, int amount, DateTime date, int accountId) {
     user!.addIncome(name, amount, date, accountId);
     saveUser();
+  }
+
+  // Method to list the incomes of the user
+  List<Transaction> getIncomes() {
+    if (user != null) {
+      return user!.income;
+    } else {
+      return [];
+    }
+  }
+
+  // Method to list the accounts of the user, returns a list with
+  // the name of the account and the id of the account.
+  List<Map<String, dynamic>> getAccounts() {
+    if (user != null) {
+      return user!.accounts.map((account) {
+        return {
+          'name': account.name,
+          'id': account.id,
+        };
+      }).toList();
+    } else {
+      return [];
+    }
   }
 }

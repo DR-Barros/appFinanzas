@@ -1,7 +1,7 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
-import 'package:app_finanzas/widgets/screens/accounts_screen.dart';
-import 'package:app_finanzas/widgets/screens/income_screen.dart';
-import 'package:app_finanzas/widgets/screens/planning_screen.dart';
+import 'package:app_finanzas/views/screens/accounts_screen.dart';
+import 'package:app_finanzas/views/screens/income_screen.dart';
+import 'package:app_finanzas/views/screens/planning_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
