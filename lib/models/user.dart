@@ -121,4 +121,12 @@ class User {
         .map((transaction) => Transaction.fromJson(transaction))
         .toList());
   }
+
+  List<Transaction> getTransactionsByMonth(DateTime date) {
+    List<Transaction> transactions = [];
+    for (Account account in accounts) {
+      transactions.addAll(account.getTransactionsByMonth(date));
+    }
+    return transactions;
+  }
 }

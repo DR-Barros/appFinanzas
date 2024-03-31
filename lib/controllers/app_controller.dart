@@ -131,6 +131,18 @@ class AppController {
     }
   }
 
+  // Method to list the incomes of the user by month
+  List<Transaction> getIncomesByMouth(DateTime date) {
+    if (user != null) {
+      return user!.income
+          .where((income) =>
+              income.date.year == date.year && income.date.month == date.month)
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
   // Method to list the accounts of the user, returns a list with
   // the name of the account and the id of the account.
   List<Map<String, dynamic>> getAccounts() {

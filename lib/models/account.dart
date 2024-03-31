@@ -53,4 +53,13 @@ class Account {
   void addIncome(Transaction transaction) {
     balance += transaction.amount;
   }
+
+  // Method to get the transactions of the account by month
+  List<Transaction> getTransactionsByMonth(DateTime date) {
+    return transactions
+        .where((transaction) =>
+            transaction.date.year == date.year &&
+            transaction.date.month == date.month)
+        .toList();
+  }
 }
