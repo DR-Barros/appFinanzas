@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/user.dart';
 import 'package:app_finanzas/models/transaction.dart';
 import 'package:app_finanzas/models/save_account.dart';
@@ -63,6 +64,7 @@ class AppController {
     return user?.name ?? 'No user';
   }
 
+  // Method to get the balance of the user.
   int getBalance() {
     return user!.accounts.fold(
       0,
@@ -70,8 +72,33 @@ class AppController {
     );
   }
 
+  // Method to get the balance of the save accounts of the user.
+  int getSaveBalance() {
+    return user!.accounts.fold(
+      0,
+      (previousValue, element) {
+        if (element is SaveAccount) {
+          return previousValue + element.balance;
+        } else {
+          return previousValue;
+        }
+      },
+    );
+  }
+
+  // Method to get the balance of the user in a string format.
   String getBalanceString() {
     String str = getBalance().toString();
+    // add dots every 3 digits
+    for (int i = str.length - 3; i > 0; i -= 3) {
+      str = str.substring(0, i) + '.' + str.substring(i);
+    }
+    return str;
+  }
+
+  // Method to get the balance of the save accounts of the user in a string format.
+  String getSaveBalanceString() {
+    String str = getSaveBalance().toString();
     // add dots every 3 digits
     for (int i = str.length - 3; i > 0; i -= 3) {
       str = str.substring(0, i) + '.' + str.substring(i);
@@ -110,6 +137,18 @@ class AppController {
           'id': account.id,
         };
       }).toList();
+    } else {
+      return [];
+    }
+  }
+
+  // Method to get the currents accounts of the user
+  List<Account> getCurrentAccounts() {
+    if (user != null) {
+      return user!.accounts
+          .where((account) => !(account is SaveAccount))
+          .map((account) => account as Account)
+          .toList();
     } else {
       return [];
     }

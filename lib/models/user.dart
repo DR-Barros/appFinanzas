@@ -61,21 +61,21 @@ class User {
 
   // Method to add an account to the user's list of accounts.
   void addAccount(String name, int balance, String type) {
-    Account account;
     if ("Ahorro" == type) {
-      account = SaveAccount(
+      SaveAccount account = SaveAccount(
         id: accounts.length,
         name: name,
         balance: balance,
       );
+      accounts.add(account);
     } else {
-      account = Account(
+      Account account = Account(
         id: accounts.length,
         name: name,
         balance: balance,
       );
+      accounts.add(account);
     }
-    accounts.add(account);
   }
 
   // Method to add a transaction to the user's list of income transactions.
