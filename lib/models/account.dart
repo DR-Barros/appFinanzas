@@ -8,12 +8,14 @@ class Account {
   final String name;
   int balance;
   final List<Transaction> transactions = [];
+  final String type;
 
   Account({
     required this.id,
     required this.name,
     required this.balance,
     List<Transaction>? transactions,
+    this.type = 'current',
   }) {
     if (transactions != null) {
       this.transactions.addAll(transactions);
@@ -28,6 +30,7 @@ class Account {
       transactions: (json['transactions'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
           .toList(),
+      type: json['type'],
     );
   }
 
@@ -38,6 +41,7 @@ class Account {
       'balance': balance,
       'transactions':
           transactions.map((transaction) => transaction.toJson()).toList(),
+      'type': type,
     };
   }
 

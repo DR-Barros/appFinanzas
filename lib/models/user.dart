@@ -36,9 +36,13 @@ class User {
       name: json['name'],
       email: json['email'],
       password: json['password'],
-      accounts: (json['accounts'] as List)
-          .map((account) => Account.fromJson(account))
-          .toList(),
+      accounts: (json['accounts'] as List).map((account) {
+        Account accountTemp = Account.fromJson(account);
+        if (accountTemp.type == 'savings')
+          return SaveAccount.fromJson(account);
+        else
+          return Account.fromJson(account);
+      }).toList(),
       income: (json['income'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
           .toList(),
