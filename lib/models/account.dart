@@ -45,11 +45,13 @@ class Account {
     };
   }
 
+  // Method to add a transaction to the account, it also updates the balance of the account.
   void addTransaction(Transaction transaction) {
     transactions.add(transaction);
     balance -= transaction.amount;
   }
 
+  // Method to add an income to the account (increase the balance of the account)
   void addIncome(Transaction transaction) {
     balance += transaction.amount;
   }

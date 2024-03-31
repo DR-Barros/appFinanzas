@@ -38,10 +38,11 @@ class User {
       password: json['password'],
       accounts: (json['accounts'] as List).map((account) {
         Account accountTemp = Account.fromJson(account);
-        if (accountTemp.type == 'savings')
+        if (accountTemp.type == 'savings') {
           return SaveAccount.fromJson(account);
-        else
+        } else {
           return Account.fromJson(account);
+        }
       }).toList(),
       income: (json['income'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
@@ -102,9 +103,14 @@ class User {
       date: date,
       toAccountID: toAccountID,
     );
-    income.add(transaction);
-    final account = accounts.firstWhere((account) => account.id == toAccountID);
-    account.addTransaction(transaction);
+    Account fromAccount =
+        accounts.firstWhere((account) => account.id == fromAccountID);
+    fromAccount.addTransaction(transaction);
+    if (toAccountID != -1) {
+      Account toAccount =
+          accounts.firstWhere((account) => account.id == toAccountID);
+      toAccount.addIncome(transaction);
+    }
   }
 
   void fromJson(Map<String, dynamic> json) {

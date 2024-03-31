@@ -3,6 +3,8 @@ import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/user.dart';
 import 'package:app_finanzas/models/transaction.dart';
 import 'package:app_finanzas/models/save_account.dart';
+import 'package:logger/logger.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppController {
@@ -28,14 +30,12 @@ class AppController {
   Future<void> getUser() async {
     final data = await SharedPreferences.getInstance();
     final userJson = data.getString('user');
-    print("User JSON: $userJson");
     if (userJson != null) {
       try {
         final jsonData = json.decode(userJson) as Map<String, dynamic>;
         user = User.fromJson(jsonData);
-        print('User loaded: ${user!.name}');
       } catch (e) {
-        print('Error loading user: $e');
+        Logger().e('Error getting user from local storage: $e');
         user = User(
           id: '0',
           name: 'invitado',
@@ -88,12 +88,8 @@ class AppController {
 
   // Method to get the balance of the user in a string format.
   String getBalanceString() {
-    String str = getBalance().toString();
-    // add dots every 3 digits
-    for (int i = str.length - 3; i > 0; i -= 3) {
-      str = str.substring(0, i) + '.' + str.substring(i);
-    }
-    return str;
+    final formatter = NumberFormat('#,##0', 'es_AR');
+    return formatter.format(getBalance());
   }
 
   // Method to get the balance of the save accounts of the user in a string format.
@@ -113,6 +109,17 @@ class AppController {
       return;
     }
     user!.addIncome(name, amount, date, accountId);
+    saveUser();
+  }
+
+  // Method to add a transaction to the user
+  void addTransaction(String title, int amount, DateTime date,
+      int fromAccountID, int toAccountID) {
+    if (user == null || fromAccountID == -1) {
+      //print('User is null or account ID is -1');
+      return;
+    }
+    user!.addTransaction(title, amount, date, fromAccountID, toAccountID);
     saveUser();
   }
 
@@ -177,6 +184,15 @@ class AppController {
           .where((account) => account is SaveAccount)
           .map((account) => account as SaveAccount)
           .toList();
+    } else {
+      return [];
+    }
+  }
+
+  // Method to get the transactions of the user by month
+  List<Transaction> getTransactionsByMonth(DateTime date) {
+    if (user != null) {
+      return user!.getTransactionsByMonth(date);
     } else {
       return [];
     }

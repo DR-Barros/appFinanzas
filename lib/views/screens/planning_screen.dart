@@ -1,4 +1,6 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/models/transaction.dart';
+import 'package:app_finanzas/views/widgets/add_transaction_modal.dart';
 import 'package:flutter/material.dart';
 
 class PlanningScreen extends StatefulWidget {
@@ -33,6 +35,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
   Widget build(BuildContext context) {
     String userName = appController.getUserName();
     String date = '${currentDate.month}/${currentDate.year}';
+    List<Transaction> transactions =
+        appController.getTransactionsByMonth(currentDate);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Planificación de gastos'),
@@ -64,10 +68,27 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   icon: Icon(Icons.arrow_right)),
             ],
           ),
+          const SizedBox(height: 20),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              final transaction = transactions[index];
+              return ListTile(
+                title: Text(transaction.title),
+                subtitle: Text(transaction.amount.toString()),
+                trailing: Text(transaction.date.toString()),
+              );
+            },
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showAddTransactionModal(context, appController.getAccounts(), () {
+            setState(() {});
+          });
+        },
         child: const Icon(Icons.add),
       ),
     );
