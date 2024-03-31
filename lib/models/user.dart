@@ -1,4 +1,5 @@
 import 'package:app_finanzas/models/account.dart';
+import 'package:app_finanzas/models/save_account.dart';
 import 'package:app_finanzas/models/transaction.dart';
 
 /*
@@ -6,12 +7,12 @@ import 'package:app_finanzas/models/transaction.dart';
 */
 
 class User {
-  final String? id;
-  final String name;
-  final String email;
-  final String? password;
-  final List<Account> accounts = [];
-  final List<Transaction> income = [];
+  String? id;
+  String name;
+  String email;
+  String? password;
+  List<Account> accounts = [];
+  List<Transaction> income = [];
 
   User(
       {this.id,
@@ -55,12 +56,21 @@ class User {
       };
 
   // Method to add an account to the user's list of accounts.
-  void addAccount(String name, int balance) {
-    final account = Account(
-      id: accounts.length,
-      name: name,
-      balance: balance,
-    );
+  void addAccount(String name, int balance, String type) {
+    Account account;
+    if ("Ahorro" == type) {
+      account = SaveAccount(
+        id: accounts.length,
+        name: name,
+        balance: balance,
+      );
+    } else {
+      account = Account(
+        id: accounts.length,
+        name: name,
+        balance: balance,
+      );
+    }
     accounts.add(account);
   }
 
@@ -91,5 +101,20 @@ class User {
     income.add(transaction);
     final account = accounts.firstWhere((account) => account.id == toAccountID);
     account.addTransaction(transaction);
+  }
+
+  void fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    email = json['email'];
+    password = json['password'];
+    accounts.clear();
+    accounts.addAll((json['accounts'] as List)
+        .map((account) => Account.fromJson(account))
+        .toList());
+    income.clear();
+    income.addAll((json['income'] as List)
+        .map((transaction) => Transaction.fromJson(transaction))
+        .toList());
   }
 }

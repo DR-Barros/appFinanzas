@@ -4,7 +4,8 @@ import 'package:app_finanzas/views/screens/income_screen.dart';
 import 'package:app_finanzas/views/screens/planning_screen.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -13,12 +14,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'App Finanzas',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MainScreen(),
+    return FutureBuilder(
+      future: AppController().init(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'App Finanzas',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: MainScreen(),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }
