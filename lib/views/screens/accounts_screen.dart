@@ -20,7 +20,12 @@ class _AccountsScreenState extends State<AccountsScreen> {
     String dineroAhorro = appController.getSaveBalanceString();
     List<SaveAccount> cuentas = appController.getSaveAccounts();
     List<Account> accounts = appController.getCurrentAccounts();
-
+    for (var cuenta in cuentas) {
+      print(cuenta.name + ' ' + cuenta.id.toString());
+    }
+    for (var cuenta in accounts) {
+      print(cuenta.name + ' ' + cuenta.id.toString());
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cuentas'),

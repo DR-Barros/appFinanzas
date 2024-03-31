@@ -31,7 +31,9 @@ class _IncomeScreenState extends State<IncomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showAddIncomeModal(context, appController.getAccounts());
+          showAddIncomeModal(context, appController.getAccounts(), () {
+            setState(() {});
+          });
         },
         child: const Icon(Icons.add),
       ),

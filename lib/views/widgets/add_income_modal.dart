@@ -1,7 +1,15 @@
+import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/views/widgets/date_input_field.dart';
 import 'package:flutter/material.dart';
 
-void showAddIncomeModal(
-    BuildContext context, List<Map<String, dynamic>> accounts) {
+void showAddIncomeModal(BuildContext context,
+    List<Map<String, dynamic>> accounts, VoidCallback callback) {
+  AppController appController = AppController();
+  final _dateController = TextEditingController();
+  String title = '';
+  int amount = 0;
+  int toAccountID = -1;
+
   showDialog(
       context: context,
       builder: (context) {
@@ -12,15 +20,18 @@ void showAddIncomeModal(
             children: <Widget>[
               TextField(
                 decoration: const InputDecoration(labelText: 'Concepto'),
+                onChanged: (value) {
+                  title = value;
+                },
               ),
               TextField(
                 decoration: const InputDecoration(labelText: 'Monto'),
                 keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  amount = int.parse(value);
+                },
               ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Fecha'),
-                keyboardType: TextInputType.datetime,
-              ),
+              DateInputField(controller: _dateController),
               DropdownButtonFormField(
                 items: accounts
                     .map((account) => DropdownMenuItem(
@@ -28,7 +39,9 @@ void showAddIncomeModal(
                           child: Text(account['name']),
                         ))
                     .toList(),
-                onChanged: (value) {},
+                onChanged: (value) {
+                  toAccountID = value as int;
+                },
                 decoration: const InputDecoration(labelText: 'Cuenta'),
               ),
             ],
@@ -41,6 +54,9 @@ void showAddIncomeModal(
                 child: const Text('Cancelar')),
             TextButton(
                 onPressed: () {
+                  appController.addIncome(title, amount,
+                      DateTime.parse(_dateController.text), toAccountID);
+                  callback();
                   Navigator.of(context).pop();
                 },
                 child: const Text('Guardar')),
