@@ -26,14 +26,12 @@ class _AccountsScreenState extends State<AccountsScreen> {
       print(cuenta.name + ' ' + cuenta.id.toString());
     }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cuentas'),
-      ),
       body: Column(
         children: <Widget>[
+          const SizedBox(height: 20),
           Text(
             'Tienes \$ $dinero en tus cuentas',
-            style: const TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           Card(
               child: Padding(

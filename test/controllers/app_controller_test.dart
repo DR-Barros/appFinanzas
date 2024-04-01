@@ -94,7 +94,7 @@ void main() {
       int balance = controller.getBalance();
       expect(balance, 0);
 
-      controller.user!.addAccount('Savings Account', 200, 'Ahorros');
+      controller.user!.addAccount('Savings Account', 200, 'Ahorro');
 
       balance = controller.getBalance();
       expect(balance, 200);
@@ -112,7 +112,7 @@ void main() {
       int balance = controller.getSaveBalance();
       expect(balance, 0);
 
-      controller.user!.addAccount('Savings Account', 200, 'Ahorros');
+      controller.user!.addAccount('Savings Account', 200, 'Ahorro');
       controller.user!.addAccount('Checking Account', 100, 'Corriente');
 
       balance = controller.getSaveBalance();
@@ -149,7 +149,7 @@ void main() {
       String balance = controller.getSaveBalanceString();
       expect(balance, '0');
 
-      controller.user!.addAccount('Savings Account', 20000, 'Ahorros');
+      controller.user!.addAccount('Savings Account', 20000, 'Ahorro');
       controller.user!.addAccount('Checking Account', 10000, 'Corriente');
 
       balance = controller.getSaveBalanceString();
@@ -323,7 +323,7 @@ void main() {
       });
       final controller = AppController();
       await controller.init();
-      controller.addAccount('Savings Account', 20000, 'Ahorros');
+      controller.addAccount('Savings Account', 20000, 'Ahorro');
       controller.addAccount('Checking Account', 10000, 'Corriente');
 
       final accounts = controller.getCurrentAccounts();
@@ -340,7 +340,7 @@ void main() {
       });
       final controller = AppController();
       await controller.init();
-      controller.addAccount('Savings Account', 20000, 'Ahorros');
+      controller.addAccount('Savings Account', 20000, 'Ahorro');
       controller.addAccount('Checking Account', 10000, 'Corriente');
 
       final accounts = controller.getSaveAccounts();
@@ -357,15 +357,16 @@ void main() {
       });
       final controller = AppController();
       await controller.init();
-      controller.addAccount('Savings Account', 20000, 'Ahorros');
+      controller.addAccount('Savings Account', 20000, 'Ahorro');
       controller.addAccount('Checking Account', 10000, 'Corriente');
       controller.addTransaction('Transfer', 5000, DateTime.now(), 1, 0);
       controller.addTransaction(
           'Transfer', 1000, DateTime.now().subtract(Duration(days: 60)), 1, 0);
-  
-        final transactions = controller.getTransactionsByMonth(DateTime.now());
 
-        expect(transactions.length, 1);
-        expect(transactions[0].title, 'Transfer');
+      final transactions = controller.getTransactionsByMonth(DateTime.now());
+
+      expect(transactions.length, 1);
+      expect(transactions[0].title, 'Transfer');
+    });
   });
 }

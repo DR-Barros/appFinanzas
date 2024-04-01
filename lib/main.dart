@@ -38,6 +38,9 @@ class MyApp extends StatelessWidget {
               floatingActionButtonTheme: FloatingActionButtonThemeData(
                 backgroundColor: Colors.blue,
               ),
+              cardTheme: const CardTheme(
+                color: Colors.white,
+              ),
             ),
             home: MainScreen(),
           );
@@ -59,7 +62,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 2;
   AppController appController = AppController();
 
   static const List<Widget> _widgetOptions = <Widget>[

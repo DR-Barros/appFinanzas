@@ -123,7 +123,7 @@ void main() {
       expect(user.accounts[0].type, 'current');
       expect(user.accounts[0].id, 0);
 
-      user.addAccount('Savings Account', 200, 'Ahorros');
+      user.addAccount('Savings Account', 200, 'Ahorro');
 
       expect(user.accounts.length, 2);
       expect(user.accounts[1].name, 'Savings Account');
