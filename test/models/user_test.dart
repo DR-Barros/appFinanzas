@@ -107,5 +107,123 @@ void main() {
       expect(userJson['accounts'], isEmpty);
       expect(userJson['income'], isEmpty);
     });
+
+    // Test para verificar la adición de una cuenta a la lista de cuentas del usuario.
+    test('Account is added to user accounts', () {
+      final user = User(
+        id: '1',
+        name: 'John Doe',
+        email: '',
+      );
+      user.addAccount('Checking Account', 100, 'Corriente');
+
+      expect(user.accounts.length, 1);
+      expect(user.accounts[0].name, 'Checking Account');
+      expect(user.accounts[0].balance, 100);
+      expect(user.accounts[0].type, 'current');
+      expect(user.accounts[0].id, 0);
+
+      user.addAccount('Savings Account', 200, 'Ahorros');
+
+      expect(user.accounts.length, 2);
+      expect(user.accounts[1].name, 'Savings Account');
+      expect(user.accounts[1].balance, 200);
+      expect(user.accounts[1].type, 'savings');
+      expect(user.accounts[1].id, 1);
+
+      user.addAccount('Investment Account', 300, 'Inversiones');
+
+      expect(user.accounts.length, 3);
+      expect(user.accounts[2].name, 'Investment Account');
+      expect(user.accounts[2].balance, 300);
+      expect(user.accounts[2].type, 'current');
+      expect(user.accounts[2].id, 2);
+    });
+
+    // Test para verificar la adición de una transacción a la lista de ingresos del usuario.
+    test('Transaction is added to user income', () {
+      final user = User(
+        id: '1',
+        name: 'John Doe',
+        email: '',
+      );
+      user.addAccount('Checking Account', 100, 'Corriente');
+      user.addAccount('Savings Account', 200, 'Ahorros');
+      user.addIncome('Checking  income', 50, DateTime.now(), 0);
+
+      expect(user.income.length, 1);
+      expect(user.income[0].title, 'Checking  income');
+      expect(user.income[0].amount, 50);
+      expect(user.income[0].toAccountID, 0);
+      expect(user.income[0].id, '0');
+      expect(user.accounts[0].balance, 150);
+      expect(user.accounts[1].balance, 200);
+
+      user.addIncome('Savings income', 25, DateTime.now(), 1);
+
+      expect(user.income.length, 2);
+      expect(user.income[1].title, 'Savings income');
+      expect(user.income[1].amount, 25);
+      expect(user.income[1].toAccountID, 1);
+      expect(user.income[1].id, '1');
+      expect(user.accounts[0].balance, 150);
+      expect(user.accounts[1].balance, 225);
+    });
+
+    // Test para verificar la adición de una transacción a una cuenta específica del usuario.
+    test('Transaction is added to specific account', () {
+      final user = User(
+        id: '1',
+        name: 'John Doe',
+        email: '',
+      );
+      user.addAccount('Checking Account', 100, 'Corriente');
+      user.addAccount('Savings Account', 200, 'Ahorros');
+
+      expect(user.accounts[0].balance, 100);
+      expect(user.accounts[1].balance, 200);
+      expect(user.accounts[0].transactions, isEmpty);
+      expect(user.accounts[1].transactions, isEmpty);
+
+      user.addTransaction('Payment', 50, DateTime.now(), 0, -1);
+
+      expect(user.accounts[0].balance, 50);
+      expect(user.accounts[1].balance, 200);
+      expect(user.accounts[0].transactions.length, 1);
+      expect(user.accounts[1].transactions, isEmpty);
+
+      user.addTransaction('Transfer', 25, DateTime.now(), 0, 1);
+
+      expect(user.accounts[0].balance, 25);
+      expect(user.accounts[1].balance, 225);
+      expect(user.accounts[0].transactions.length, 2);
+      expect(user.accounts[1].transactions, isEmpty);
+    });
+
+    // Test para verificar getTransactionsByMonth en User.
+    test('Get transactions by month', () {
+      final user = User(
+        id: '1',
+        name: 'John Doe',
+        email: '',
+      );
+      user.addAccount('Checking Account', 100, 'Corriente');
+      user.addAccount('Savings Account', 200, 'Ahorros');
+      user.addTransaction('Payment', 50, DateTime.now(), 0, -1);
+      user.addTransaction('Transfer', 25, DateTime.now(), 0, 1);
+      user.addTransaction('Payment', 50, DateTime.now(), 1, -1);
+      user.addTransaction(
+          'Transfer', 25, DateTime.now().subtract(Duration(days: 60)), 1, 0);
+      user.addTransaction(
+          'Payment', 50, DateTime.now().subtract(Duration(days: 60)), 0, -1);
+
+      expect(user.getTransactionsByMonth(DateTime.now()).length, 3);
+      expect(
+          user
+              .getTransactionsByMonth(
+                  DateTime.now().subtract(Duration(days: 60)))
+              .length,
+          2);
+    });
   });
 }

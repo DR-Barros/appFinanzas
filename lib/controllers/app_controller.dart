@@ -67,6 +67,9 @@ class AppController {
       id: '0',
       name: 'invitado',
       email: '',
+      password: "",
+      accounts: [],
+      income: [],
     );
     saveUser();
   }
@@ -89,7 +92,7 @@ class AppController {
     return user!.accounts.fold(
       0,
       (previousValue, element) {
-        if (element.type == 'save') {
+        if (element.type == 'savings') {
           return previousValue + element.balance;
         } else {
           return previousValue;
@@ -106,12 +109,8 @@ class AppController {
 
   // Method to get the balance of the save accounts of the user in a string format.
   String getSaveBalanceString() {
-    String str = getSaveBalance().toString();
-    // add dots every 3 digits
-    for (int i = str.length - 3; i > 0; i -= 3) {
-      str = str.substring(0, i) + '.' + str.substring(i);
-    }
-    return str;
+    final formatter = NumberFormat('#,##0', 'es_AR');
+    return formatter.format(getSaveBalance());
   }
 
   // Method to add a income to the user
@@ -193,7 +192,7 @@ class AppController {
   List<Account> getSaveAccounts() {
     if (user != null) {
       return user!.accounts
-          .where((account) => account.type == 'save')
+          .where((account) => account.type == 'savings')
           .map((account) => account as Account)
           .toList();
     } else {
