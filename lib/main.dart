@@ -1,7 +1,9 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:app_finanzas/views/screens/accounts_screen.dart';
 import 'package:app_finanzas/views/screens/income_screen.dart';
+import 'package:app_finanzas/views/screens/bills_screen.dart';
 import 'package:app_finanzas/views/screens/planning_screen.dart';
+import 'package:app_finanzas/views/screens/user_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -22,6 +24,20 @@ class MyApp extends StatelessWidget {
             title: 'App Finanzas',
             theme: ThemeData(
               primarySwatch: Colors.blue,
+              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                  selectedItemColor: Colors.blue,
+                  unselectedItemColor: Colors.grey),
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  textStyle: MaterialStateProperty.all(
+                    const TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+              floatingActionButtonTheme: FloatingActionButtonThemeData(
+                backgroundColor: Colors.blue,
+              ),
             ),
             home: MainScreen(),
           );
@@ -48,8 +64,10 @@ class _MainScreenState extends State<MainScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     IncomeScreen(),
+    BillsScreen(),
     PlanningScreen(),
-    AccountsScreen()
+    AccountsScreen(),
+    UserScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -69,12 +87,20 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Ingresos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.event_note),
+            icon: Icon(Icons.multiple_stop),
+            label: 'Gastos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
             label: 'Planificación',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             label: 'Cuentas',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Usuario',
           ),
         ],
         currentIndex: _selectedIndex,

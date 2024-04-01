@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/user.dart';
 import 'package:app_finanzas/models/transaction.dart';
-import 'package:app_finanzas/models/save_account.dart';
 import 'package:logger/logger.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,6 +59,18 @@ class AppController {
     await data.setString('user', userJson);
   }
 
+  // Method to reset the user to the default user.
+  Future<void> resetUser() async {
+    final data = await SharedPreferences.getInstance();
+    await data.remove('user');
+    user = User(
+      id: '0',
+      name: 'invitado',
+      email: '',
+    );
+    saveUser();
+  }
+
   // Method to get the user name.
   String getUserName() {
     return user?.name ?? 'No user';
@@ -77,7 +89,7 @@ class AppController {
     return user!.accounts.fold(
       0,
       (previousValue, element) {
-        if (element is SaveAccount) {
+        if (element.type == 'save') {
           return previousValue + element.balance;
         } else {
           return previousValue;
@@ -169,7 +181,7 @@ class AppController {
   List<Account> getCurrentAccounts() {
     if (user != null) {
       return user!.accounts
-          .where((account) => !(account is SaveAccount))
+          .where((account) => account.type == 'current')
           .map((account) => account as Account)
           .toList();
     } else {
@@ -178,11 +190,11 @@ class AppController {
   }
 
   // Method to get the SaveAccounts of the user
-  List<SaveAccount> getSaveAccounts() {
+  List<Account> getSaveAccounts() {
     if (user != null) {
       return user!.accounts
-          .where((account) => account is SaveAccount)
-          .map((account) => account as SaveAccount)
+          .where((account) => account.type == 'save')
+          .map((account) => account as Account)
           .toList();
     } else {
       return [];

@@ -1,7 +1,6 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:app_finanzas/views/widgets/add_account_modal.dart';
 import 'package:app_finanzas/models/account.dart';
-import 'package:app_finanzas/models/save_account.dart';
 import 'package:flutter/material.dart';
 
 class AccountsScreen extends StatefulWidget {
@@ -18,7 +17,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   Widget build(BuildContext context) {
     String dinero = appController.getBalanceString();
     String dineroAhorro = appController.getSaveBalanceString();
-    List<SaveAccount> cuentas = appController.getSaveAccounts();
+    List<Account> cuentas = appController.getSaveAccounts();
     List<Account> accounts = appController.getCurrentAccounts();
     for (var cuenta in cuentas) {
       print(cuenta.name + ' ' + cuenta.id.toString());

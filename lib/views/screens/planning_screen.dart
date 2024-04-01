@@ -1,7 +1,5 @@
-import 'package:app_finanzas/controllers/app_controller.dart';
-import 'package:app_finanzas/models/transaction.dart';
-import 'package:app_finanzas/views/widgets/add_transaction_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:app_finanzas/controllers/app_controller.dart';
 
 class PlanningScreen extends StatefulWidget {
   const PlanningScreen({super.key});
@@ -33,10 +31,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String userName = appController.getUserName();
-    String date = '${currentDate.month}/${currentDate.year}';
-    List<Transaction> transactions =
-        appController.getTransactionsByMonth(currentDate);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Planificación de gastos'),
@@ -44,52 +38,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
       body: Column(
         children: <Widget>[
           Text(
-            'Planificación de gastos de $userName',
+            'Planificación de gastos',
             style: TextStyle(fontSize: 20),
           ),
-          Row(
-            children: <Widget>[
-              IconButton(
-                  onPressed: () {
-                    _previousMonth();
-                  },
-                  icon: Icon(Icons.arrow_left)),
-              Expanded(
-                child: Text(
-                  'Gastos de $date',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              IconButton(
-                  onPressed: () {
-                    _nextMonth();
-                  },
-                  icon: Icon(Icons.arrow_right)),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
-              return ListTile(
-                title: Text(transaction.title),
-                subtitle: Text(transaction.getAmountString()),
-                trailing: Text(transaction.date.toString()),
-              );
-            },
-          ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showAddTransactionModal(context, appController.getAccounts(), () {
-            setState(() {});
-          });
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

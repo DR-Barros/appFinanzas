@@ -1,5 +1,4 @@
 import 'package:app_finanzas/models/account.dart';
-import 'package:app_finanzas/models/save_account.dart';
 import 'package:app_finanzas/models/transaction.dart';
 
 /*
@@ -37,12 +36,7 @@ class User {
       email: json['email'],
       password: json['password'],
       accounts: (json['accounts'] as List).map((account) {
-        Account accountTemp = Account.fromJson(account);
-        if (accountTemp.type == 'savings') {
-          return SaveAccount.fromJson(account);
-        } else {
-          return Account.fromJson(account);
-        }
+        return Account.fromJson(account);
       }).toList(),
       income: (json['income'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
@@ -62,21 +56,14 @@ class User {
 
   // Method to add an account to the user's list of accounts.
   void addAccount(String name, int balance, String type) {
-    if ("Ahorro" == type) {
-      SaveAccount account = SaveAccount(
-        id: accounts.length,
-        name: name,
-        balance: balance,
-      );
-      accounts.add(account);
-    } else {
-      Account account = Account(
-        id: accounts.length,
-        name: name,
-        balance: balance,
-      );
-      accounts.add(account);
-    }
+    String typeAccount = type == 'Ahorros' ? 'savings' : 'current';
+    final account = Account(
+      id: accounts.length,
+      name: name,
+      balance: balance,
+      type: typeAccount,
+    );
+    accounts.add(account);
   }
 
   // Method to add a transaction to the user's list of income transactions.
