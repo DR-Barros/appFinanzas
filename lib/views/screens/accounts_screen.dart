@@ -55,7 +55,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     final cuenta = cuentas[index];
                     return ListTile(
                       title: Text(cuenta.name),
-                      subtitle: Text(cuenta.balance.toString()),
+                      subtitle: Text(cuenta.getBalanceString()),
                     );
                   },
                 ),
@@ -89,7 +89,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showAddAccountModal(context);
+          showAddAccountModal(context, () {
+            setState(() {});
+          });
         },
         child: const Icon(Icons.add),
       ),

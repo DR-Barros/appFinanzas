@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /*
 * Model class for Transaction
 */
@@ -38,5 +40,10 @@ class Transaction {
       'toAccountID': toAccountID,
       'type': type,
     };
+  }
+
+  String getAmountString() {
+    final formatter = NumberFormat('#,##0', 'es_AR');
+    return formatter.format(amount);
   }
 }

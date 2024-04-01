@@ -76,7 +76,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
               final transaction = transactions[index];
               return ListTile(
                 title: Text(transaction.title),
-                subtitle: Text(transaction.amount.toString()),
+                subtitle: Text(transaction.getAmountString()),
                 trailing: Text(transaction.date.toString()),
               );
             },

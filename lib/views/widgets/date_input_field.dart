@@ -5,7 +5,7 @@ class DateInputField extends StatelessWidget {
   final TextEditingController controller;
   DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  DateInputField({Key? key, required this.controller}) : super(key: key);
+  DateInputField({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {

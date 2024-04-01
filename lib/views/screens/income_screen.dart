@@ -71,7 +71,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
               final income = incomes[index];
               return ListTile(
                 title: Text(income.title),
-                subtitle: Text(income.amount.toString()),
+                subtitle: Text(income.getAmountString()),
               );
             },
           ),

@@ -1,7 +1,7 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
 
-void showAddAccountModal(BuildContext context) {
+void showAddAccountModal(BuildContext context, VoidCallback callback) {
   AppController appController = AppController();
   String name = '';
   int balance = 0;
@@ -41,6 +41,9 @@ void showAddAccountModal(BuildContext context) {
                 onChanged: (value) {
                   type = value!;
                 },
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
               ),
             ],
           ),
@@ -53,6 +56,7 @@ void showAddAccountModal(BuildContext context) {
             TextButton(
                 onPressed: () {
                   appController.addAccount(name, balance, type);
+                  callback();
                   Navigator.of(context).pop();
                 },
                 child: const Text('Guardar')),

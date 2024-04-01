@@ -1,4 +1,5 @@
 import 'package:app_finanzas/models/transaction.dart';
+import 'package:intl/intl.dart';
 
 /*
   This class is used to store the bank account information of the user.
@@ -63,5 +64,10 @@ class Account {
             transaction.date.year == date.year &&
             transaction.date.month == date.month)
         .toList();
+  }
+
+  String getBalanceString() {
+    final formatter = NumberFormat('#,##0', 'es_AR');
+    return formatter.format(balance);
   }
 }
