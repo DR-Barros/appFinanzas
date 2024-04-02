@@ -4,9 +4,7 @@
 class Planning {
   final String id;
   int planningIncome;
-  List<PlanningItem> planningItems = [
-    PlanningItem(id: 1, name: 'Ahorro', type: 'saving', value: 0),
-  ];
+  List<PlanningItem> planningItems = [];
 
   Planning({
     required this.id,
@@ -15,6 +13,10 @@ class Planning {
   }) {
     if (planningItems != null) {
       this.planningItems.addAll(planningItems);
+    } else {
+      this.planningItems = [
+        PlanningItem(id: 0, name: 'Ahorro', type: 'saving', value: 0),
+      ];
     }
   }
 
@@ -42,7 +44,7 @@ class Planning {
   // Method to add a new PlanningItem to the list
   void addPlanningItem(String name, String type, int value) {
     planningItems.add(PlanningItem(
-      id: planningItems.length + 1,
+      id: planningItems.length,
       name: name,
       type: type,
       value: value,
