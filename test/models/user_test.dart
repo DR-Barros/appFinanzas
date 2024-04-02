@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_finanzas/models/user.dart';
 import 'package:app_finanzas/models/account.dart';
@@ -77,6 +79,7 @@ void main() {
         'password': 'password123',
         'accounts': [],
         'income': [],
+        'plannings': [],
       };
       final user = User.fromJson(userJson);
 
@@ -86,6 +89,7 @@ void main() {
       expect(user.password, 'password123');
       expect(user.accounts, isEmpty);
       expect(user.income, isEmpty);
+      expect(user.plannings, isEmpty);
     });
 
     // Test para verificar la serialización de una instancia de User a JSON.
@@ -97,6 +101,7 @@ void main() {
         password: 'password123',
         accounts: [],
         income: [],
+        plannings: [],
       );
       final userJson = user.toJson();
 
@@ -106,6 +111,7 @@ void main() {
       expect(userJson['password'], 'password123');
       expect(userJson['accounts'], isEmpty);
       expect(userJson['income'], isEmpty);
+      expect(userJson['plannings'], isEmpty);
     });
 
     // Test para verificar la adición de una cuenta a la lista de cuentas del usuario.

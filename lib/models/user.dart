@@ -1,4 +1,5 @@
 import 'package:app_finanzas/models/account.dart';
+import 'package:app_finanzas/models/planning.dart';
 import 'package:app_finanzas/models/transaction.dart';
 
 /*
@@ -12,6 +13,7 @@ class User {
   String? password;
   List<Account> accounts = [];
   List<Transaction> income = [];
+  List<Planning> plannings = [];
 
   User(
       {this.id,
@@ -19,12 +21,16 @@ class User {
       required this.email,
       this.password,
       List<Account>? accounts,
-      List<Transaction>? income}) {
+      List<Transaction>? income,
+      List<Planning>? plannings}) {
     if (accounts != null) {
       this.accounts.addAll(accounts);
     }
     if (income != null) {
       this.income.addAll(income);
+    }
+    if (plannings != null) {
+      this.plannings.addAll(plannings);
     }
   }
 
@@ -41,6 +47,9 @@ class User {
       income: (json['income'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
           .toList(),
+      plannings: (json['plannings'] as List)
+          .map((planning) => Planning.fromJson(planning))
+          .toList(),
     );
   }
 
@@ -52,6 +61,7 @@ class User {
         'password': password,
         'accounts': accounts.map((account) => account.toJson()).toList(),
         'income': income.map((transaction) => transaction.toJson()).toList(),
+        'plannings': plannings.map((planning) => planning.toJson()).toList(),
       };
 
   // Method to add an account to the user's list of accounts.
