@@ -49,11 +49,11 @@ class _IncomeScreenState extends State<IncomeScreen> {
                   onPressed: () {
                     _previousMonth();
                   },
-                  icon: Icon(Icons.arrow_left)),
+                  icon: const Icon(Icons.arrow_left)),
               Expanded(
                 child: Text(
                   'Ingresos de $date',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
               ),

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -291,7 +289,7 @@ void main() {
       controller.addAccount('Savings Account', 20000, 'Ahorros');
       controller.addIncome('Salary', 10000, DateTime.now(), 0);
       controller.addIncome(
-          'Bonus', 5000, DateTime.now().subtract(Duration(days: 60)), 0);
+          'Bonus', 5000, DateTime.now().subtract(const Duration(days: 60)), 0);
 
       final incomes = controller.getIncomesByMouth(DateTime.now());
       expect(incomes.length, 1);

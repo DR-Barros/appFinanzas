@@ -116,7 +116,7 @@ class AppController {
   // Method to add a income to the user
   void addIncome(String name, int amount, DateTime date, int accountId) {
     if (user == null || accountId == -1) {
-      print('User is null or account ID is -1');
+      Logger().d('User is null or account ID is -1');
       return;
     }
     user!.addIncome(name, amount, date, accountId);
@@ -193,7 +193,7 @@ class AppController {
     if (user != null) {
       return user!.accounts
           .where((account) => account.type == 'current')
-          .map((account) => account as Account)
+          .map((account) => account)
           .toList();
     } else {
       return [];
@@ -205,7 +205,7 @@ class AppController {
     if (user != null) {
       return user!.accounts
           .where((account) => account.type == 'savings')
-          .map((account) => account as Account)
+          .map((account) => account)
           .toList();
     } else {
       return [];

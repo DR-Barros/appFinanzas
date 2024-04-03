@@ -1,6 +1,4 @@
-/**
- * Model class for Planning 
- */
+/// Model class to represent a Planning object
 class Planning {
   final String id;
   int planningIncome;

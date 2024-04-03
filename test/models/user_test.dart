@@ -218,16 +218,16 @@ void main() {
       user.addTransaction('Payment', 50, DateTime.now(), 0, -1);
       user.addTransaction('Transfer', 25, DateTime.now(), 0, 1);
       user.addTransaction('Payment', 50, DateTime.now(), 1, -1);
-      user.addTransaction(
-          'Transfer', 25, DateTime.now().subtract(Duration(days: 60)), 1, 0);
-      user.addTransaction(
-          'Payment', 50, DateTime.now().subtract(Duration(days: 60)), 0, -1);
+      user.addTransaction('Transfer', 25,
+          DateTime.now().subtract(const Duration(days: 60)), 1, 0);
+      user.addTransaction('Payment', 50,
+          DateTime.now().subtract(const Duration(days: 60)), 0, -1);
 
       expect(user.getTransactionsByMonth(DateTime.now()).length, 3);
       expect(
           user
               .getTransactionsByMonth(
-                  DateTime.now().subtract(Duration(days: 60)))
+                  DateTime.now().subtract(const Duration(days: 60)))
               .length,
           2);
     });

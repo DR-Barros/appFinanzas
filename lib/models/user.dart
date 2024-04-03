@@ -1,14 +1,10 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/planning.dart';
 import 'package:app_finanzas/models/transaction.dart';
 
-/*
-* Model class for User
-*/
-
+/// Class to represent a User.
+/// A User has a name, email, password, list of accounts, list of income transactions,
+/// and list of plannings.
 class User {
   String? id;
   String name;
@@ -39,7 +35,7 @@ class User {
     }
   }
 
-  // Named constructor to create a User instance from a JSON map.
+  /// Named constructor to create a User instance from a JSON map.
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
@@ -58,7 +54,7 @@ class User {
     );
   }
 
-  // Method to convert a User instance to a JSON map.
+  /// Method to convert a User instance to a JSON map.
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
@@ -69,7 +65,7 @@ class User {
         'plannings': plannings.map((planning) => planning.toJson()).toList(),
       };
 
-  // Method to add an account to the user's list of accounts.
+  /// Method to add an account to the user's list of accounts.
   void addAccount(String name, int balance, String type) {
     String typeAccount = type == 'Ahorro' ? 'savings' : 'current';
     final account = Account(
@@ -81,7 +77,7 @@ class User {
     accounts.add(account);
   }
 
-  // Method to add a transaction to the user's list of income transactions.
+  /// Method to add a transaction to the user's list of income transactions.
   void addIncome(String title, int amount, DateTime date, int toAccountID) {
     final transaction = Transaction(
       id: income.length.toString(),
@@ -95,16 +91,16 @@ class User {
     account.addIncome(transaction);
   }
 
-  // Method to add a planning to the user's list of plannings.
+  /// Method to add a planning to the user's list of plannings.
   void addPlanning(DateTime date) {
-    String planningId = date.month.toString() + '-' + date.year.toString();
+    String planningId = "${date.month}-${date.year}";
     plannings
         .add(Planning(id: planningId, planningIncome: getIncomesByMonth(date)));
   }
 
   /// Method to edit the planning income of the user for the given month.
   void editPlanningIncome(DateTime date, int amount) {
-    String planningId = date.month.toString() + '-' + date.year.toString();
+    String planningId = "${date.month}-${date.year}";
     Planning planning = plannings.firstWhere((plan) => plan.id == planningId);
     planning.planningIncome = amount;
   }
@@ -112,7 +108,7 @@ class User {
   /// Method to add a planning item to the user's list of plannings.
   void addPlanningItem(
       String name, int amount, String type, int percentage, DateTime date) {
-    String planningId = date.month.toString() + '-' + date.year.toString();
+    String planningId = "${date.month}-${date.year}";
     Planning planning = plannings.firstWhere((plan) => plan.id == planningId);
     if (type == 'percentage') {
       planning.addPlanningItem(name, type, percentage);
@@ -180,11 +176,8 @@ class User {
   /// Method to get the total mount of the user's transactions for the given month.
   int getTotalTransactionsByMonth(DateTime date) {
     int total = 0;
-    for (Transaction transaction in income) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year) {
-        total += transaction.amount;
-      }
+    for (Account account in accounts) {
+      total += account.getTotalTransactionsByMonth(date);
     }
     return total;
   }
@@ -192,12 +185,8 @@ class User {
   /// Method to get the total mount of the user's transactions for the given month
   int getTotalTransactionsByMonthAndType(DateTime date, String type) {
     int total = 0;
-    for (Transaction transaction in income) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year &&
-          transaction.type == type) {
-        total += transaction.amount;
-      }
+    for (Account account in accounts) {
+      total += account.getTotalTransactionsByMonthAndType(date, type);
     }
     return total;
   }
@@ -208,7 +197,7 @@ class User {
   /// keys: name, planningPercentage, planningValue, realValue, realPercentage,
   /// expense, difference.
   List<Map<String, dynamic>> getPlanningByMonth(DateTime date) {
-    String planningId = date.month.toString() + '-' + date.year.toString();
+    String planningId = "${date.month}-${date.year}";
     for (Planning plan in plannings) {
       if (plan.id == planningId) {
         List<PlanningItem> planningItems = plan.planningItems;
@@ -283,7 +272,7 @@ class User {
   }
 
   int getPlanningIncomeByMonth(DateTime date) {
-    String planningId = date.month.toString() + '-' + date.year.toString();
+    String planningId = "${date.month}-${date.year}";
     for (Planning plan in plannings) {
       if (plan.id == planningId) {
         return plan.planningIncome;

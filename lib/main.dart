@@ -35,14 +35,14 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
               ),
-              floatingActionButtonTheme: FloatingActionButtonThemeData(
+              floatingActionButtonTheme: const FloatingActionButtonThemeData(
                 backgroundColor: Colors.blue,
               ),
               cardTheme: const CardTheme(
                 color: Colors.white,
               ),
             ),
-            home: MainScreen(),
+            home: const MainScreen(),
           );
         } else {
           return const Center(
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  MainScreen({super.key});
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();

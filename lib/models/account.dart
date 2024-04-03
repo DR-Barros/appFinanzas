@@ -70,4 +70,27 @@ class Account {
     final formatter = NumberFormat('#,##0', 'es_AR');
     return formatter.format(balance);
   }
+
+  int getTotalTransactionsByMonth(DateTime date) {
+    int total = 0;
+    for (Transaction transaction in transactions) {
+      if (transaction.date.year == date.year &&
+          transaction.date.month == date.month) {
+        total += transaction.amount;
+      }
+    }
+    return total;
+  }
+
+  int getTotalTransactionsByMonthAndType(DateTime date, String type) {
+    int total = 0;
+    for (Transaction transaction in transactions) {
+      if (transaction.date.year == date.year &&
+          transaction.date.month == date.month &&
+          transaction.type == type) {
+        total += transaction.amount;
+      }
+    }
+    return total;
+  }
 }
