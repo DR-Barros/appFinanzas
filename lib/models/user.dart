@@ -135,13 +135,14 @@ class User {
 
   // Method to add a transaction to the Account with the given ID.
   void addTransaction(String title, int amount, DateTime date,
-      int fromAccountID, int toAccountID) {
+      int fromAccountID, int toAccountID, String type) {
     final transaction = Transaction(
       id: income.length.toString(),
       title: title,
       amount: amount,
       date: date,
       toAccountID: toAccountID,
+      type: type,
     );
     Account fromAccount =
         accounts.firstWhere((account) => account.id == fromAccountID);
@@ -176,6 +177,36 @@ class User {
     return transactions;
   }
 
+  /// Method to get the total mount of the user's transactions for the given month.
+  int getTotalTransactionsByMonth(DateTime date) {
+    int total = 0;
+    for (Transaction transaction in income) {
+      if (transaction.date.month == date.month &&
+          transaction.date.year == date.year) {
+        total += transaction.amount;
+      }
+    }
+    return total;
+  }
+
+  /// Method to get the total mount of the user's transactions for the given month
+  int getTotalTransactionsByMonthAndType(DateTime date, String type) {
+    int total = 0;
+    for (Transaction transaction in income) {
+      if (transaction.date.month == date.month &&
+          transaction.date.year == date.year &&
+          transaction.type == type) {
+        total += transaction.amount;
+      }
+    }
+    return total;
+  }
+
+  /// Method to get the planning of the user for the given month.
+  /// If the planning does not exist, it is created.
+  /// The planning is returned as a list of maps with the following
+  /// keys: name, planningPercentage, planningValue, realValue, realPercentage,
+  /// expense, difference.
   List<Map<String, dynamic>> getPlanningByMonth(DateTime date) {
     String planningId = date.month.toString() + '-' + date.year.toString();
     for (Planning plan in plannings) {
@@ -198,6 +229,12 @@ class User {
             'realPercentage': item.type == 'percentage'
                 ? item.value
                 : (item.value * 100) / totalRealValue,
+            'expense': getTotalTransactionsByMonthAndType(date, item.name),
+            'difference': item.type == 'percentage'
+                ? item.value -
+                    getTotalTransactionsByMonthAndType(date, item.name)
+                : (item.value * 100) / totalRealValue -
+                    getTotalTransactionsByMonthAndType(date, item.name),
           });
         }
         planning.add(
@@ -223,6 +260,8 @@ class User {
                     0,
                     (previousValue, element) =>
                         previousValue + element['realPercentage']),
+            'expense': totalRealValue - getTotalTransactionsByMonth(date),
+            'difference': 0,
           },
         );
         planning.add(
@@ -232,13 +271,15 @@ class User {
             'planningValue': plan.planningIncome,
             'realValue': totalRealValue,
             'realPercentage': 100,
+            'expense': getTotalTransactionsByMonth(date),
+            'difference': totalRealValue - getTotalTransactionsByMonth(date),
           },
         );
-        print(planning);
         return planning;
       }
     }
-    return [];
+    addPlanning(date);
+    return getPlanningByMonth(date);
   }
 
   int getPlanningIncomeByMonth(DateTime date) {

@@ -98,7 +98,8 @@ class _BillsScreenState extends State<BillsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showAddTransactionModal(context, appController.getAccounts(), () {
+          showAddTransactionModal(
+              context, appController.getAccounts(), currentDate, () {
             setState(() {});
           });
         },

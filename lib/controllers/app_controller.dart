@@ -125,12 +125,12 @@ class AppController {
 
   // Method to add a transaction to the user
   void addTransaction(String title, int amount, DateTime date,
-      int fromAccountID, int toAccountID) {
+      int fromAccountID, int toAccountID, String type) {
     if (user == null || fromAccountID == -1) {
       //print('User is null or account ID is -1');
       return;
     }
-    user!.addTransaction(title, amount, date, fromAccountID, toAccountID);
+    user!.addTransaction(title, amount, date, fromAccountID, toAccountID, type);
     saveUser();
   }
 
