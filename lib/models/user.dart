@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:math';
+
 import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/planning.dart';
 import 'package:app_finanzas/models/transaction.dart';
@@ -31,6 +34,8 @@ class User {
     }
     if (plannings != null) {
       this.plannings.addAll(plannings);
+    } else {
+      addPlanning(DateTime.now());
     }
   }
 
@@ -90,6 +95,44 @@ class User {
     account.addIncome(transaction);
   }
 
+  // Method to add a planning to the user's list of plannings.
+  void addPlanning(DateTime date) {
+    String planningId = date.month.toString() + '-' + date.year.toString();
+    plannings
+        .add(Planning(id: planningId, planningIncome: getIncomesByMonth(date)));
+  }
+
+  /// Method to edit the planning income of the user for the given month.
+  void editPlanningIncome(DateTime date, int amount) {
+    String planningId = date.month.toString() + '-' + date.year.toString();
+    Planning planning = plannings.firstWhere((plan) => plan.id == planningId);
+    planning.planningIncome = amount;
+  }
+
+  /// Method to add a planning item to the user's list of plannings.
+  void addPlanningItem(
+      String name, int amount, String type, int percentage, DateTime date) {
+    String planningId = date.month.toString() + '-' + date.year.toString();
+    Planning planning = plannings.firstWhere((plan) => plan.id == planningId);
+    if (type == 'percentage') {
+      planning.addPlanningItem(name, type, percentage);
+    } else {
+      planning.addPlanningItem(name, type, amount);
+    }
+  }
+
+  // Method to get the total income of the user for the given month.
+  int getIncomesByMonth(DateTime date) {
+    int totalIncome = 0;
+    for (Transaction transaction in income) {
+      if (transaction.date.month == date.month &&
+          transaction.date.year == date.year) {
+        totalIncome += transaction.amount;
+      }
+    }
+    return totalIncome;
+  }
+
   // Method to add a transaction to the Account with the given ID.
   void addTransaction(String title, int amount, DateTime date,
       int fromAccountID, int toAccountID) {
@@ -131,5 +174,80 @@ class User {
       transactions.addAll(account.getTransactionsByMonth(date));
     }
     return transactions;
+  }
+
+  List<Map<String, dynamic>> getPlanningByMonth(DateTime date) {
+    String planningId = date.month.toString() + '-' + date.year.toString();
+    for (Planning plan in plannings) {
+      if (plan.id == planningId) {
+        List<PlanningItem> planningItems = plan.planningItems;
+        List<Map<String, dynamic>> planning = [];
+        int totalRealValue = getIncomesByMonth(date);
+        for (PlanningItem item in planningItems) {
+          planning.add({
+            'name': item.name,
+            'planningPercentage': item.type == 'percentage'
+                ? item.value
+                : (item.value * 100) / plan.planningIncome,
+            'planningValue': item.type == 'percentage'
+                ? (item.value * plan.planningIncome) / 100
+                : item.value,
+            'realValue': item.type == 'percentage'
+                ? (item.value * totalRealValue) / 100
+                : item.value,
+            'realPercentage': item.type == 'percentage'
+                ? item.value
+                : (item.value * 100) / totalRealValue,
+          });
+        }
+        planning.add(
+          {
+            'name': 'Ahorro',
+            'planningPercentage': 100 -
+                planning.fold(
+                    0,
+                    (previousValue, element) =>
+                        previousValue + element['planningPercentage']),
+            'planningValue': plan.planningIncome -
+                planning.fold(
+                    0,
+                    (previousValue, element) =>
+                        previousValue + element['planningValue']),
+            'realValue': totalRealValue -
+                planning.fold(
+                    0,
+                    (previousValue, element) =>
+                        previousValue + element['realValue']),
+            'realPercentage': 100 -
+                planning.fold(
+                    0,
+                    (previousValue, element) =>
+                        previousValue + element['realPercentage']),
+          },
+        );
+        planning.add(
+          {
+            'name': 'Total',
+            'planningPercentage': 100,
+            'planningValue': plan.planningIncome,
+            'realValue': totalRealValue,
+            'realPercentage': 100,
+          },
+        );
+        print(planning);
+        return planning;
+      }
+    }
+    return [];
+  }
+
+  int getPlanningIncomeByMonth(DateTime date) {
+    String planningId = date.month.toString() + '-' + date.year.toString();
+    for (Planning plan in plannings) {
+      if (plan.id == planningId) {
+        return plan.planningIncome;
+      }
+    }
+    return 0;
   }
 }

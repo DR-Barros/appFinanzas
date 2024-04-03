@@ -140,6 +140,18 @@ class AppController {
     saveUser();
   }
 
+  /// Method to edit a planning income
+  void editPlanningIncome(DateTime date, int amount) {
+    user!.editPlanningIncome(date, amount);
+    saveUser();
+  }
+
+  void addPlanningItem(
+      String name, int amount, String type, int percentage, DateTime date) {
+    user!.addPlanningItem(name, amount, type, percentage, date);
+    saveUser();
+  }
+
   // Method to list the incomes of the user
   List<Transaction> getIncomes() {
     if (user != null) {
@@ -206,6 +218,31 @@ class AppController {
       return user!.getTransactionsByMonth(date);
     } else {
       return [];
+    }
+  }
+
+  List<Map<String, dynamic>> getPlanningsByMouth(DateTime date) {
+    if (user != null) {
+      return user!.getPlanningByMonth(date);
+    } else {
+      return [];
+    }
+  }
+
+  String getPlanningIncomeByMonthString(DateTime date) {
+    final formatter = NumberFormat('#,##0', 'es_AR');
+    if (user != null) {
+      return formatter.format(user!.getPlanningIncomeByMonth(date));
+    } else {
+      return '0';
+    }
+  }
+
+  int getPlanningIncomeByMonth(DateTime date) {
+    if (user != null) {
+      return user!.getPlanningIncomeByMonth(date);
+    } else {
+      return 0;
     }
   }
 }

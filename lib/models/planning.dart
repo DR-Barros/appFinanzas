@@ -13,10 +13,6 @@ class Planning {
   }) {
     if (planningItems != null) {
       this.planningItems.addAll(planningItems);
-    } else {
-      this.planningItems = [
-        PlanningItem(id: 0, name: 'Ahorro', type: 'saving', value: 0),
-      ];
     }
   }
 
@@ -63,19 +59,9 @@ class Planning {
     planningItem.updateValue(value);
   }
 
-  // Method to get the list of PlanningItems with {name, percentageValue, fixedValue}
-  List<Map<String, dynamic>> getPlanningItems() {
-    return planningItems
-        .map((planningItem) => {
-              'name': planningItem.name,
-              'percentageValue': planningItem.type == 'percentage'
-                  ? planningItem.value
-                  : planningItem.value / planningIncome * 100,
-              'fixedValue': planningItem.type == 'fixed'
-                  ? planningItem.value
-                  : planningItem.value * planningIncome / 100,
-            })
-        .toList();
+  // Method to get the list of PlanningItems
+  List<PlanningItem> getPlanningItems() {
+    return planningItems;
   }
 }
 
