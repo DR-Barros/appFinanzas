@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:app_finanzas/models/account.dart';
+import 'package:app_finanzas/models/planning.dart';
 import 'package:app_finanzas/models/user.dart';
 import 'package:app_finanzas/models/transaction.dart';
 import 'package:logger/logger.dart';
@@ -114,23 +115,23 @@ class AppController {
   }
 
   // Method to add a income to the user
-  void addIncome(String name, int amount, DateTime date, int accountId) {
-    if (user == null || accountId == -1) {
+  void addIncome(String name, int amount, DateTime date, Account? toAccount) {
+    if (user == null || toAccount == null) {
       Logger().d('User is null or account ID is -1');
       return;
     }
-    user!.addIncome(name, amount, date, accountId);
+    user!.addIncome(name, amount, date, toAccount);
     saveUser();
   }
 
   // Method to add a transaction to the user
   void addTransaction(String title, int amount, DateTime date,
-      int fromAccountID, int toAccountID, String type) {
-    if (user == null || fromAccountID == -1) {
-      //print('User is null or account ID is -1');
+      Account? fromAccount, Account? toAccount, String type) {
+    if (user == null || fromAccount?.id == -1 || toAccount == null || fromAccount == null) {
+      Logger().d('User is null, account ID is -1 or toAccount is null');
       return;
     }
-    user!.addTransaction(title, amount, date, fromAccountID, toAccountID, type);
+    user!.addTransaction(title, amount, date, fromAccount, toAccount, type);
     saveUser();
   }
 
@@ -175,14 +176,9 @@ class AppController {
 
   // Method to list the accounts of the user, returns a list with
   // the name of the account and the id of the account.
-  List<Map<String, dynamic>> getAccounts() {
+  List<Account> getAccounts() {
     if (user != null) {
-      return user!.accounts.map((account) {
-        return {
-          'name': account.name,
-          'id': account.id,
-        };
-      }).toList();
+      return user!.accounts;
     } else {
       return [];
     }
@@ -221,9 +217,17 @@ class AppController {
     }
   }
 
-  List<Map<String, dynamic>> getPlanningsByMouth(DateTime date) {
+  List<PlanningItem> getPlanningsByMouth(DateTime date) {
     if (user != null) {
       return user!.getPlanningByMonth(date);
+    } else {
+      return [];
+    }
+  }
+
+  List<Map<String, dynamic>> showPlanningsByMouth(DateTime date) {
+    if (user != null) {
+      return user!.showPlanningByMonth(date);
     } else {
       return [];
     }

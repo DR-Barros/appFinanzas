@@ -1,14 +1,15 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/views/widgets/date_input_field.dart';
 import 'package:flutter/material.dart';
 
 void showAddIncomeModal(BuildContext context,
-    List<Map<String, dynamic>> accounts, VoidCallback callback) {
+    List<Account> accounts, VoidCallback callback) {
   AppController appController = AppController();
   final _dateController = TextEditingController();
   String title = '';
   int amount = 0;
-  int toAccountID = -1;
+  Account? toAccount;
 
   showDialog(
       context: context,
@@ -35,12 +36,12 @@ void showAddIncomeModal(BuildContext context,
               DropdownButtonFormField(
                 items: accounts
                     .map((account) => DropdownMenuItem(
-                          value: account['id'],
-                          child: Text(account['name']),
+                          value: account,
+                          child: Text(account.name),
                         ))
                     .toList(),
                 onChanged: (value) {
-                  toAccountID = value as int;
+                  toAccount = value as Account;
                 },
                 decoration: const InputDecoration(labelText: 'Cuenta'),
               ),
@@ -55,7 +56,7 @@ void showAddIncomeModal(BuildContext context,
             TextButton(
                 onPressed: () {
                   appController.addIncome(title, amount,
-                      DateTime.parse(_dateController.text), toAccountID);
+                      DateTime.parse(_dateController.text), toAccount!);
                   callback();
                   Navigator.of(context).pop();
                 },

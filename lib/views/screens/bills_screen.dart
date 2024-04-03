@@ -1,4 +1,5 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/transaction.dart';
 import 'package:app_finanzas/views/widgets/add_transaction_modal.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +33,10 @@ class _BillsScreenState extends State<BillsScreen> {
   }
 
   _accountName(int id) {
-    List<Map<String, dynamic>> accounts = appController.getAccounts();
+    List<Account> accounts = appController.getAccounts();
     for (var account in accounts) {
-      if (account['id'] == id) {
-        return account['name'];
+      if (account.id == id) {
+        return account.name;
       }
     }
     return 'Pago';

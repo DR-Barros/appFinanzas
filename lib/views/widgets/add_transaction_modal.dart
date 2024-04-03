@@ -1,22 +1,23 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/models/account.dart';
+import 'package:app_finanzas/models/planning.dart';
 import 'package:app_finanzas/views/widgets/date_input_field.dart';
 import 'package:flutter/material.dart';
 
 void showAddTransactionModal(BuildContext context,
-    List<Map<String, dynamic>> accounts, DateTime date, VoidCallback callback) {
+    List<Account> accounts, DateTime date, VoidCallback callback) {
   AppController appController = AppController();
   final _dateController = TextEditingController();
   String title = '';
   int amount = 0;
-  int toAccountID = -1;
-  int fromAccountID = -1;
+  Account? toAccount;
+  Account? fromAccount;
   String type = '';
   // agregamos una cuenta "pago" con id -1 para que el usuario pueda seleccionar que no se va a transferir a ninguna cuenta
 
-  List<Map<String, dynamic>> toAccounts = List.from(accounts);
-  toAccounts.add({'id': -1, 'name': 'Pago'});
-  List<Map<String, dynamic>> typeTransaction =
-      appController.getPlanningsByMouth(date);
+  List<Account> toAccounts = List.from(accounts);
+  toAccounts.add(Account(id: -1, name: 'Pago', balance: 0));
+  List<PlanningItem> typeTransaction = appController.getPlanningsByMouth(date);
 
   showDialog(
       context: context,
@@ -44,39 +45,39 @@ void showAddTransactionModal(BuildContext context,
                 DropdownButtonFormField(
                   items: accounts
                       .map((account) => DropdownMenuItem(
-                            value: account['id'],
-                            child: Text(account['name']),
+                            value: account,
+                            child: Text(account.name),
                           ))
                       .toList(),
                   onChanged: (value) {
-                    fromAccountID = value as int;
+                    fromAccount = value;
                   },
                   decoration: const InputDecoration(labelText: 'Cuenta origen'),
-                  validator: (value) => value == fromAccountID
+                  validator: (value) => value == toAccount
                       ? 'La cuenta origen no puede ser la misma que la cuenta destino'
                       : null,
                 ),
                 DropdownButtonFormField(
                   items: toAccounts
                       .map((account) => DropdownMenuItem(
-                            value: account['id'],
-                            child: Text(account['name']),
+                            value: account,
+                            child: Text(account.name),
                           ))
                       .toList(),
                   onChanged: (value) {
-                    toAccountID = value as int;
+                    toAccount = value;
                   },
                   decoration:
                       const InputDecoration(labelText: 'Cuenta destino'),
-                  validator: (value) => value == fromAccountID
+                  validator: (value) => value == fromAccount
                       ? 'La cuenta destino no puede ser la misma que la cuenta origen'
                       : null,
                 ),
                 DropdownButtonFormField(
                     items: typeTransaction
                         .map((transaction) => DropdownMenuItem(
-                              value: transaction['name'],
-                              child: Text(transaction['name']),
+                              value: transaction.name,
+                              child: Text(transaction.name),
                             ))
                         .toList(),
                     onChanged: (value) {
@@ -97,10 +98,10 @@ void showAddTransactionModal(BuildContext context,
                 onPressed: () {
                   if (title.isEmpty || amount == 0) {
                     return;
-                  } else if (fromAccountID == -1) {
+                  } else if (fromAccount == null) {
                     return;
-                  } else if (toAccountID == -1) {
-                    print("toAccountID: $toAccountID");
+                  } else if (toAccount == null) {
+                    return;
                   } else if (type == '') {
                     return;
                   }
@@ -108,8 +109,8 @@ void showAddTransactionModal(BuildContext context,
                       title,
                       amount,
                       DateTime.parse(_dateController.text),
-                      fromAccountID,
-                      toAccountID,
+                      fromAccount,
+                      toAccount,
                       type);
                   callback();
                   Navigator.of(context).pop();

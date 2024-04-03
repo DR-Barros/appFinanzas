@@ -34,7 +34,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> plannings =
-        appController.getPlanningsByMouth(currentDate);
+        appController.showPlanningsByMouth(currentDate);
     String date = '${currentDate.month}/${currentDate.year}';
     String planningIncome =
         appController.getPlanningIncomeByMonthString(currentDate);

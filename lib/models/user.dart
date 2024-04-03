@@ -78,17 +78,16 @@ class User {
   }
 
   /// Method to add a transaction to the user's list of income transactions.
-  void addIncome(String title, int amount, DateTime date, int toAccountID) {
+  void addIncome(String title, int amount, DateTime date, Account toAccount) {
     final transaction = Transaction(
       id: income.length.toString(),
       title: title,
       amount: amount,
       date: date,
-      toAccountID: toAccountID,
+      toAccountID: toAccount.id,
     );
     income.add(transaction);
-    final account = accounts.firstWhere((account) => account.id == toAccountID);
-    account.addIncome(transaction);
+    toAccount.addIncome(transaction);
   }
 
   /// Method to add a planning to the user's list of plannings.
@@ -131,21 +130,17 @@ class User {
 
   // Method to add a transaction to the Account with the given ID.
   void addTransaction(String title, int amount, DateTime date,
-      int fromAccountID, int toAccountID, String type) {
+      Account fromAccount, Account toAccount, String type) {
     final transaction = Transaction(
       id: income.length.toString(),
       title: title,
       amount: amount,
       date: date,
-      toAccountID: toAccountID,
+      toAccountID: toAccount.id,
       type: type,
     );
-    Account fromAccount =
-        accounts.firstWhere((account) => account.id == fromAccountID);
     fromAccount.addTransaction(transaction);
-    if (toAccountID != -1) {
-      Account toAccount =
-          accounts.firstWhere((account) => account.id == toAccountID);
+    if (toAccount.id != -1) {
       toAccount.addIncome(transaction);
     }
   }
@@ -196,7 +191,25 @@ class User {
   /// The planning is returned as a list of maps with the following
   /// keys: name, planningPercentage, planningValue, realValue, realPercentage,
   /// expense, difference.
-  List<Map<String, dynamic>> getPlanningByMonth(DateTime date) {
+  List<PlanningItem> getPlanningByMonth(DateTime date) {
+    String planningId = "${date.month}-${date.year}";
+    List<PlanningItem> planningItems = [];
+    for (Planning plan in plannings) {
+      if (plan.id == planningId) {
+        planningItems = plan.planningItems;
+      }
+    }
+    return planningItems;
+  }
+
+
+
+  /// Method to show the planning of the user for the given month.
+  /// If the planning does not exist, it is created.
+  /// The planning is returned as a list of maps with the following
+  /// keys: name, planningPercentage, planningValue, realValue, realPercentage,
+  /// expense, difference.
+  List<Map<String, dynamic>> showPlanningByMonth(DateTime date) {
     String planningId = "${date.month}-${date.year}";
     for (Planning plan in plannings) {
       if (plan.id == planningId) {
@@ -268,8 +281,9 @@ class User {
       }
     }
     addPlanning(date);
-    return getPlanningByMonth(date);
+    return showPlanningByMonth(date);
   }
+
 
   int getPlanningIncomeByMonth(DateTime date) {
     String planningId = "${date.month}-${date.year}";
