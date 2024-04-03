@@ -11,11 +11,7 @@ void main() {
 
       expect(planning.id, '1');
       expect(planning.planningIncome, 1000);
-      expect(planning.planningItems.length, 1);
-      expect(planning.planningItems[0].id, 0);
-      expect(planning.planningItems[0].name, 'Ahorro');
-      expect(planning.planningItems[0].type, 'saving');
-      expect(planning.planningItems[0].value, 0);
+      expect(planning.planningItems.length, 0);
     });
 
     test('Planning is created from JSON', () {
@@ -51,11 +47,7 @@ void main() {
 
       expect(planningJson['id'], '1');
       expect(planningJson['planningIncome'], 1000);
-      expect(planningJson['planningItems'].length, 1);
-      expect(planningJson['planningItems'][0]['id'], 0);
-      expect(planningJson['planningItems'][0]['name'], 'Ahorro');
-      expect(planningJson['planningItems'][0]['type'], 'saving');
-      expect(planningJson['planningItems'][0]['value'], 0);
+      expect(planningJson['planningItems'].length, 0);
     });
 
     test('PlanningItem is added to Planning', () {
@@ -65,11 +57,11 @@ void main() {
       );
       planning.addPlanningItem('Inversión', 'investment', 0);
 
-      expect(planning.planningItems.length, 2);
-      expect(planning.planningItems[1].id, 1);
-      expect(planning.planningItems[1].name, 'Inversión');
-      expect(planning.planningItems[1].type, 'investment');
-      expect(planning.planningItems[1].value, 0);
+      expect(planning.planningItems.length, 1);
+      expect(planning.planningItems[0].id, 0);
+      expect(planning.planningItems[0].name, 'Inversión');
+      expect(planning.planningItems[0].type, 'investment');
+      expect(planning.planningItems[0].value, 0);
     });
 
     test('PlanningItem is removed from Planning', () {
@@ -87,6 +79,7 @@ void main() {
         id: '1',
         planningIncome: 1000,
       );
+      planning.addPlanningItem('Inversión', 'investment', 0);
       planning.updatePlanningItemValue(0, 100);
 
       expect(planning.planningItems[0].value, 100);
@@ -148,6 +141,21 @@ void main() {
       expect(planningItem.value, 0);
       planningItem.updateValue(100);
       expect(planningItem.value, 100);
+    });
+
+    test("getPlanningItems", () {
+      final planning = Planning(
+        id: '1',
+        planningIncome: 1000,
+      );
+      planning.addPlanningItem('Inversión', 'investment', 0);
+      planning.addPlanningItem("ahorro", "savings", 100);
+      List<PlanningItem> plannings = planning.getPlanningItems();
+
+      expect(plannings[0].id, 0);
+      expect(plannings[0].name, 'Inversión');
+      expect(plannings[0].type, 'investment');
+      expect(plannings[0].value, 0);
     });
   });
 }
