@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_finanzas/models/planning.dart';
 
@@ -156,6 +158,43 @@ void main() {
       expect(plannings[0].name, 'Inversión');
       expect(plannings[0].type, 'investment');
       expect(plannings[0].value, 0);
+      expect(plannings[1].id, 1);
+      expect(plannings[1].name, 'ahorro');
+      expect(plannings[1].type, 'savings');
+      expect(plannings[1].value, 100);
+    });
+
+    test("update planning item", () {
+      PlanningItem planningItem = PlanningItem(
+        id: 1,
+        name: 'Ahorro',
+        type: 'fixed',
+        value: 100,
+      );
+      planningItem.update("Inversión", "percentage", 30, 40);
+
+      expect(planningItem.name, "Inversión");
+      expect(planningItem.type, "percentage");
+      expect(planningItem.value, 30);
+
+      planningItem.update("Ahorro", "fixed", 60, 80);
+
+      expect(planningItem.name, "Ahorro");
+      expect(planningItem.type, "fixed");
+      expect(planningItem.value, 80);
+    });
+
+    test("update planning item value", () {
+      Planning planning = Planning(
+        id: '1',
+        planningIncome: 1000,
+      );
+      planning.addPlanningItem('Inversión', 'fixed', 0);
+      planning.updatePlanningItem(0, "Ahorro", "percentage", 30, 40);
+
+      expect(planning.planningItems[0].name, "Ahorro");
+      expect(planning.planningItems[0].type, "percentage");
+      expect(planning.planningItems[0].value, 30);
     });
   });
 }

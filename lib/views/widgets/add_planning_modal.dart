@@ -48,8 +48,8 @@ void showAddPlanningModal(
                       amount = (money * percentage) ~/ 100;
                     }),
                 DropdownButtonFormField(
-                  items: [
-                    DropdownMenuItem(
+                  items: const [
+                     DropdownMenuItem(
                       value: 'fixed',
                       child: Text('Valor fijo'),
                     ),

@@ -57,6 +57,13 @@ class Planning {
     planningItem.updateValue(value);
   }
 
+  void updatePlanningItem(
+      int id, String name, String type, int percentage, int amount) {
+    final planningItem =
+        planningItems.firstWhere((planningItem) => planningItem.id == id);
+    planningItem.update(name, type, percentage, amount);
+  }
+
   // Method to get the list of PlanningItems
   List<PlanningItem> getPlanningItems() {
     return planningItems;
@@ -98,7 +105,7 @@ class PlanningItem {
   void updateValue(int value) {
     this.value = value;
   }
-  
+
   void update(String name, String type, int percentage, int amount) {
     this.name = name;
     this.type = type;

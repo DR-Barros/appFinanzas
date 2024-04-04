@@ -1,3 +1,4 @@
+import 'package:app_finanzas/models/account.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,7 +67,7 @@ void main() {
       expect(controller.user!.password, '');
       expect(controller.user!.accounts, isEmpty);
       expect(controller.user!.income, isEmpty);
-      expect(controller.user!.plannings, isEmpty);
+      expect(controller.user!.plannings.length, 1);
     });
 
     // Test getUserName method.
@@ -167,7 +168,8 @@ void main() {
       await controller.init();
 
       controller.user!.addAccount('Savings Account', 20000, 'Ahorros');
-      controller.addIncome('Salary', 10000, DateTime.now(), 0);
+      controller.addIncome(
+          'Salary', 10000, DateTime.now(), controller.user!.accounts[0]);
 
       expect(controller.user!.income.length, 1);
       expect(controller.user!.income[0].title, 'Salary');
@@ -178,7 +180,7 @@ void main() {
       expect(controller.getBalance(), 30000);
     });
 
-    // Test addIncome method with invalid account ID.
+    // Test addIncome method without account.
     test('AppController does not add income with invalid account ID', () async {
       SharedPreferences.setMockInitialValues({
         'user':
@@ -187,7 +189,7 @@ void main() {
       final controller = AppController();
       await controller.init();
 
-      controller.addIncome('Salary', 10000, DateTime.now(), -1);
+      controller.addIncome('Salary', 10000, DateTime.now(), null);
 
       expect(controller.user!.income.length, 0);
       expect(controller.user!.accounts, isEmpty);
@@ -204,11 +206,14 @@ void main() {
       await controller.init();
 
       controller.user!.addAccount('Savings Account', 20000, 'Ahorros');
+      Account account = controller.user!.accounts[0];
       controller.user!.addAccount('Checking Account', 10000, 'Corriente');
-      controller.addTransaction('Transfer', 5000, DateTime.now(), 1, 0);
+      Account account2 = controller.user!.accounts[1];
+      controller.addTransaction(
+          'Transfer', 5000, DateTime.now(), account, account2, "savings");
 
-      expect(controller.user!.accounts[0].balance, 25000);
-      expect(controller.user!.accounts[1].balance, 5000);
+      expect(controller.user!.accounts[0].balance, 15000);
+      expect(controller.user!.accounts[1].balance, 15000);
       expect(controller.getBalance(), 30000);
     });
 
@@ -222,13 +227,14 @@ void main() {
       final controller = AppController();
       await controller.init();
 
-      controller.addTransaction('Transfer', 5000, DateTime.now(), -1, 0);
+      controller.addTransaction(
+          'Transfer', 5000, DateTime.now(), null, null, "savings");
 
       expect(controller.user!.accounts, isEmpty);
       expect(controller.getBalance(), 0);
     });
 
-    // Test addTransaction method to -1 account ID.
+    // Test addTransaction method with -1 account ID.
     test('AppController does not add transaction to -1 account ID', () async {
       SharedPreferences.setMockInitialValues({
         'user':
@@ -237,7 +243,13 @@ void main() {
       final controller = AppController();
       await controller.init();
       controller.addAccount('Savings Account', 20000, 'Ahorros');
-      controller.addTransaction('Transfer', 5000, DateTime.now(), 0, -1);
+      controller.addTransaction(
+          'Transfer',
+          5000,
+          DateTime.now(),
+          controller.user!.accounts[0],
+          Account(id: -1, name: 'Invalid Account', balance: 0, type: 'savings'),
+          "savings");
 
       expect(controller.user!.accounts[0].balance, 15000);
       expect(controller.getBalance(), 15000);
@@ -268,7 +280,8 @@ void main() {
       final controller = AppController();
       await controller.init();
       controller.addAccount('Savings Account', 20000, 'Ahorros');
-      controller.addIncome('Salary', 10000, DateTime.now(), 0);
+      controller.addIncome(
+          'Salary', 10000, DateTime.now(), controller.user!.accounts[0]);
 
       final incomes = controller.getIncomes();
       expect(incomes.length, 1);
@@ -287,9 +300,13 @@ void main() {
       final controller = AppController();
       await controller.init();
       controller.addAccount('Savings Account', 20000, 'Ahorros');
-      controller.addIncome('Salary', 10000, DateTime.now(), 0);
       controller.addIncome(
-          'Bonus', 5000, DateTime.now().subtract(const Duration(days: 60)), 0);
+          'Salary', 10000, DateTime.now(), controller.user!.accounts[0]);
+      controller.addIncome(
+          'Bonus',
+          5000,
+          DateTime.now().subtract(const Duration(days: 60)),
+          controller.user!.accounts[0]);
 
       final incomes = controller.getIncomesByMouth(DateTime.now());
       expect(incomes.length, 1);
@@ -311,8 +328,8 @@ void main() {
 
       final accounts = controller.getAccounts();
       expect(accounts.length, 1);
-      expect(accounts[0]['name'], 'Savings Account');
-      expect(accounts[0]['id'], 0);
+      expect(accounts[0].name, 'Savings Account');
+      expect(accounts[0].id, 0);
     });
 
     // Test getCurrentAccounts method.
@@ -359,14 +376,27 @@ void main() {
       await controller.init();
       controller.addAccount('Savings Account', 20000, 'Ahorro');
       controller.addAccount('Checking Account', 10000, 'Corriente');
-      controller.addTransaction('Transfer', 5000, DateTime.now(), 1, 0);
       controller.addTransaction(
-          'Transfer', 1000, DateTime.now().subtract(Duration(days: 60)), 1, 0);
+          'Transfer',
+          5000,
+          DateTime.now(),
+          controller.user!.accounts[0],
+          controller.user!.accounts[1],
+          "savings");
+      controller.addTransaction(
+          'Transfer',
+          1000,
+          DateTime.now().subtract(Duration(days: 60)),
+          controller.user!.accounts[0],
+          controller.user!.accounts[1],
+          "savings");
 
       final transactions = controller.getTransactionsByMonth(DateTime.now());
 
       expect(transactions.length, 1);
       expect(transactions[0].title, 'Transfer');
+      expect(transactions[0].amount, 5000);
+      expect(transactions[0].date, isNotNull);
     });
   });
 }

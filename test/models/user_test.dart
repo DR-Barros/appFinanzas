@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_finanzas/models/user.dart';
 import 'package:app_finanzas/models/account.dart';
@@ -137,12 +135,12 @@ void main() {
       expect(user.accounts[1].type, 'savings');
       expect(user.accounts[1].id, 1);
 
-      user.addAccount('Investment Account', 300, 'Inversiones');
+      user.addAccount('Investment Account', 300, 'credit');
 
       expect(user.accounts.length, 3);
       expect(user.accounts[2].name, 'Investment Account');
       expect(user.accounts[2].balance, 300);
-      expect(user.accounts[2].type, 'current');
+      expect(user.accounts[2].type, 'credit');
       expect(user.accounts[2].id, 2);
     });
 
@@ -155,7 +153,7 @@ void main() {
       );
       user.addAccount('Checking Account', 100, 'Corriente');
       user.addAccount('Savings Account', 200, 'Ahorros');
-      user.addIncome('Checking  income', 50, DateTime.now(), 0);
+      user.addIncome('Checking  income', 50, DateTime.now(), user.accounts[0]);
 
       expect(user.income.length, 1);
       expect(user.income[0].title, 'Checking  income');
@@ -165,7 +163,7 @@ void main() {
       expect(user.accounts[0].balance, 150);
       expect(user.accounts[1].balance, 200);
 
-      user.addIncome('Savings income', 25, DateTime.now(), 1);
+      user.addIncome('Savings income', 25, DateTime.now(), user.accounts[1]);
 
       expect(user.income.length, 2);
       expect(user.income[1].title, 'Savings income');
@@ -191,14 +189,16 @@ void main() {
       expect(user.accounts[0].transactions, isEmpty);
       expect(user.accounts[1].transactions, isEmpty);
 
-      user.addTransaction('Payment', 50, DateTime.now(), 0, -1);
+      user.addTransaction('Payment', 50, DateTime.now(), user.accounts[0],
+          Account(id: -1, name: 'Other Account', balance: 0), 'Payment');
 
       expect(user.accounts[0].balance, 50);
       expect(user.accounts[1].balance, 200);
       expect(user.accounts[0].transactions.length, 1);
       expect(user.accounts[1].transactions, isEmpty);
 
-      user.addTransaction('Transfer', 25, DateTime.now(), 0, 1);
+      user.addTransaction('Transfer', 25, DateTime.now(), user.accounts[0],
+          user.accounts[1], 'Transfer');
 
       expect(user.accounts[0].balance, 25);
       expect(user.accounts[1].balance, 225);
@@ -214,14 +214,22 @@ void main() {
         email: '',
       );
       user.addAccount('Checking Account', 100, 'Corriente');
+      Account a1 = user.accounts[0];
       user.addAccount('Savings Account', 200, 'Ahorros');
-      user.addTransaction('Payment', 50, DateTime.now(), 0, -1);
-      user.addTransaction('Transfer', 25, DateTime.now(), 0, 1);
-      user.addTransaction('Payment', 50, DateTime.now(), 1, -1);
-      user.addTransaction('Transfer', 25,
-          DateTime.now().subtract(const Duration(days: 60)), 1, 0);
+      Account a2 = user.accounts[1];
+      Account a3 = Account(id: -1, name: 'Other Account', balance: 0);
+      user.addTransaction('Payment', 50, DateTime.now(), a1, a3, 'Payment');
+      user.addTransaction('Transfer', 25, DateTime.now(), a1, a2, 'Transfer');
+      user.addTransaction('Payment', 50, DateTime.now(), a1, a3, 'Payment');
+      user.addTransaction(
+          'Transfer',
+          25,
+          DateTime.now().subtract(const Duration(days: 60)),
+          a1,
+          a2,
+          'Transfer');
       user.addTransaction('Payment', 50,
-          DateTime.now().subtract(const Duration(days: 60)), 0, -1);
+          DateTime.now().subtract(const Duration(days: 60)), a1, a3, 'Payment');
 
       expect(user.getTransactionsByMonth(DateTime.now()).length, 3);
       expect(
