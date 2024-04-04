@@ -14,6 +14,7 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     String userName = appController.getUserName();
+    bool showPlanningIncome = appController.showPlanningIncome;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Usuario'),
@@ -27,6 +28,17 @@ class _UserScreenState extends State<UserScreen> {
           Text(
             'Bienvenido $userName',
             style: const TextStyle(fontSize: 20),
+          ),
+          CheckboxListTile(
+            value: showPlanningIncome,
+            onChanged: (value) {
+              appController.showPlanningIncome = value!;
+              appController.saveUser();
+              setState(() {
+                showPlanningIncome = value;
+              });
+            },
+            title: const Text('Mostrar ingresos planificados'),
           ),
           ElevatedButton(
             onPressed: () {

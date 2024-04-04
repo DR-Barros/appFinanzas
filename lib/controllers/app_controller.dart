@@ -221,6 +221,15 @@ class AppController {
     }
   }
 
+  // Method to get the account by id
+  Account getAccountById(int id) {
+    if (user != null) {
+      return user!.accounts.firstWhere((account) => account.id == id);
+    } else {
+      return Account(id: -1, name: 'No account', balance: 0, type: '');
+    }
+  }
+
   // Method to get the transactions of the user by month
   List<Transaction> getTransactionsByMonth(DateTime date) {
     if (user != null) {

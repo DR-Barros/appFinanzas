@@ -71,7 +71,8 @@ class _IncomeScreenState extends State<IncomeScreen> {
               final income = incomes[index];
               return ListTile(
                 title: Text(income.title),
-                subtitle: Text(income.getAmountString()),
+                subtitle: Text('Monto: \$${income.amount}   ->   ${appController.getAccountById(income.toAccountID).name}'),
+                trailing: Text('${income.date.day}/${income.date.month}/${income.date.year}'),
               );
             },
           ),

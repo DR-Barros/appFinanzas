@@ -38,7 +38,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
     String date = '${currentDate.month}/${currentDate.year}';
     String planningIncome =
         appController.getPlanningIncomeByMonthString(currentDate);
-
+    bool showPlanningIncome = appController.showPlanningIncome;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Planificación de gastos'),
@@ -67,6 +67,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                       icon: Icon(Icons.arrow_right)),
                 ],
               ),
+              if (showPlanningIncome)
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Row(
@@ -89,6 +90,30 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   ],
                 ),
               ),
+              if (!showPlanningIncome)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columnSpacing: 10,
+                  columns: const <DataColumn>[
+                    DataColumn(label: Text('Item'),),
+                    DataColumn(label: Text('\$')),
+                    DataColumn(label: Text('%')),
+                    DataColumn(label: Text('Gasto')),
+                    DataColumn(label: Text('Diferencia')),
+                  ],
+                  rows: plannings
+                      .map((planning) => DataRow(cells: <DataCell>[
+                            DataCell(Text(planning['name'])),
+                            DataCell(Text(planning['realValue'].toString())),
+                            DataCell(Text(planning['realPercentage'].toString())),
+                            DataCell(Text(planning['expense'].toString())),
+                            DataCell(Text(planning['difference'].toString())),
+                          ]))
+                      .toList(),
+                ),
+              ),
+              if (showPlanningIncome)
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(

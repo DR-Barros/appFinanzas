@@ -89,7 +89,8 @@ class _BillsScreenState extends State<BillsScreen> {
                 title: Text(transaction.title),
                 subtitle: Text(
                     '${transaction.getAmountString()} -> ${_accountName(transaction.toAccountID)}'),
-                trailing: Text(transaction.date.toString()),
+                trailing: Text(
+                    '${transaction.date.day}/${transaction.date.month}/${transaction.date.year}'),
               );
             },
           ),
