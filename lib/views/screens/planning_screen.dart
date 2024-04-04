@@ -43,85 +43,87 @@ class _PlanningScreenState extends State<PlanningScreen> {
         appBar: AppBar(
           title: const Text('Planificación de gastos'),
         ),
-        body: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                IconButton(
-                    onPressed: () {
-                      _previousMonth();
-                    },
-                    icon: Icon(Icons.arrow_left)),
-                Expanded(
-                  child: Text(
-                    'Planificación de $date',
-                    style: TextStyle(fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                IconButton(
-                    onPressed: () {
-                      _nextMonth();
-                    },
-                    icon: Icon(Icons.arrow_right)),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
+        body: SingleChildScrollView(
+          child:  Column(
+            children: <Widget>[
+              Row(
                 children: <Widget>[
+                  IconButton(
+                      onPressed: () {
+                        _previousMonth();
+                      },
+                      icon: Icon(Icons.arrow_left)),
                   Expanded(
-                      child: Text(
-                    'Ingresos planificados: $planningIncome',
-                  )),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      ShowEditPlanningIncomeModal(context, currentDate,
-                          appController.getPlanningIncomeByMonth(currentDate),
-                          () {
-                        setState(() {});
-                      });
-                    },
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Editar'),
-                  )
+                    child: Text(
+                      'Planificación de $date',
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        _nextMonth();
+                      },
+                      icon: Icon(Icons.arrow_right)),
                 ],
               ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columnSpacing: 10,
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text('Item'),
-                  ),
-                  DataColumn(
-                    label: Text('P. \$'),
-                  ),
-                  DataColumn(
-                    label: Text('P. %'),
-                  ),
-                  DataColumn(label: Text('\$')),
-                  DataColumn(label: Text('%')),
-                  DataColumn(label: Text('Gasto')),
-                  DataColumn(label: Text('Diferencia')),
-                ],
-                rows: plannings
-                    .map((planning) => DataRow(cells: <DataCell>[
-                          DataCell(Text(planning['name'])),
-                          DataCell(Text(planning['planningValue'].toString())),
-                          DataCell(
-                              Text(planning['planningPercentage'].toString())),
-                          DataCell(Text(planning['realValue'].toString())),
-                          DataCell(Text(planning['realPercentage'].toString())),
-                          DataCell(Text(planning['expense'].toString())),
-                          DataCell(Text(planning['difference'].toString())),
-                        ]))
-                    .toList(),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Text(
+                      'Ingresos planificados: $planningIncome',
+                    )),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        ShowEditPlanningIncomeModal(context, currentDate,
+                            appController.getPlanningIncomeByMonth(currentDate),
+                            () {
+                          setState(() {});
+                        });
+                      },
+                      icon: const Icon(Icons.edit),
+                      label: const Text('Editar'),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columnSpacing: 10,
+                  columns: const <DataColumn>[
+                    DataColumn(
+                      label: Text('Item'),
+                    ),
+                    DataColumn(
+                      label: Text('P. \$'),
+                    ),
+                    DataColumn(
+                      label: Text('P. %'),
+                    ),
+                    DataColumn(label: Text('\$')),
+                    DataColumn(label: Text('%')),
+                    DataColumn(label: Text('Gasto')),
+                    DataColumn(label: Text('Diferencia')),
+                  ],
+                  rows: plannings
+                      .map((planning) => DataRow(cells: <DataCell>[
+                            DataCell(Text(planning['name'])),
+                            DataCell(Text(planning['planningValue'].toString())),
+                            DataCell(
+                                Text(planning['planningPercentage'].toString())),
+                            DataCell(Text(planning['realValue'].toString())),
+                            DataCell(Text(planning['realPercentage'].toString())),
+                            DataCell(Text(planning['expense'].toString())),
+                            DataCell(Text(planning['difference'].toString())),
+                          ]))
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {

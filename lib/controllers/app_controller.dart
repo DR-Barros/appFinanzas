@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AppController {
   User? user;
+  bool showPlanningIncome = false;
 
   // Singleton instance of AppController.
   static final AppController _instance = AppController._internal();
@@ -184,7 +185,7 @@ class AppController {
     }
   }
 
-  // Method to get the currents accounts of the user
+  /// Method to get the currents accounts of the user
   List<Account> getCurrentAccounts() {
     if (user != null) {
       return user!.accounts
@@ -196,7 +197,19 @@ class AppController {
     }
   }
 
-  // Method to get the SaveAccounts of the user
+  /// Method to get the CreditAccounts of the user
+  List<Account> getCreditAccounts() {
+    if (user != null) {
+      return user!.accounts
+          .where((account) => account.type == 'credit')
+          .map((account) => account)
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+  /// Method to get the SaveAccounts of the user
   List<Account> getSaveAccounts() {
     if (user != null) {
       return user!.accounts

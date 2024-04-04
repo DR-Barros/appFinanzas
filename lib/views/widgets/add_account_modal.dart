@@ -31,7 +31,7 @@ void showAddAccountModal(BuildContext context, VoidCallback callback) {
               ),
               DropdownButton<String>(
                 value: type,
-                items: <String>['Ahorro', 'Corriente']
+                items: <String>['Ahorro', 'Corriente', 'Crédito']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

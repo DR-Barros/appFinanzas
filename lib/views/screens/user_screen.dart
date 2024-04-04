@@ -18,7 +18,11 @@ class _UserScreenState extends State<UserScreen> {
       appBar: AppBar(
         title: const Text('Usuario'),
       ),
-      body: Column(
+      body: 
+
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
             'Bienvenido $userName',

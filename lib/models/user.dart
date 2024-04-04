@@ -67,7 +67,7 @@ class User {
 
   /// Method to add an account to the user's list of accounts.
   void addAccount(String name, int balance, String type) {
-    String typeAccount = type == 'Ahorro' ? 'savings' : 'current';
+    String typeAccount = type == 'Ahorro' ? 'savings' : type == 'Corriente' ? 'current' : 'credit';
     final account = Account(
       id: accounts.length,
       name: name,
