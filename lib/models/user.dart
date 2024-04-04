@@ -218,6 +218,8 @@ class User {
         int totalRealValue = getIncomesByMonth(date);
         for (PlanningItem item in planningItems) {
           planning.add({
+            'id': item.id,
+            'type': item.type,
             'name': item.name,
             'planningPercentage': item.type == 'percentage'
                 ? item.value
@@ -241,6 +243,8 @@ class User {
         }
         planning.add(
           {
+            'id': -1,
+            'type': 'percentage',
             'name': 'Ahorro',
             'planningPercentage': 100 -
                 planning.fold(
@@ -268,6 +272,8 @@ class User {
         );
         planning.add(
           {
+            'id': -2,
+            'type': 'percentage',
             'name': 'Total',
             'planningPercentage': 100,
             'planningValue': plan.planningIncome,

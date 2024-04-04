@@ -65,8 +65,8 @@ class Planning {
 
 class PlanningItem {
   final int id;
-  final String name;
-  final String type; // "percentage" or "fixed"
+  String name;
+  String type; // "percentage" or "fixed"
   int value;
 
   PlanningItem({
@@ -97,5 +97,11 @@ class PlanningItem {
   // Method to update the value of a PlanningItem
   void updateValue(int value) {
     this.value = value;
+  }
+  
+  void update(String name, String type, int percentage, int amount) {
+    this.name = name;
+    this.type = type;
+    value = type == 'percentage' ? percentage : amount;
   }
 }
