@@ -300,4 +300,22 @@ class User {
     }
     return 0;
   }
+
+  void updatePlanningItem(DateTime time, int id, String name, String type,
+      int percentage, int amount) {
+    String planningId = "${time.month}-${time.year}";
+    Planning planning = plannings.firstWhere((plan) => plan.id == planningId);
+    PlanningItem planningItem =
+        planning.planningItems.firstWhere((item) => item.id == id);
+    String oldName = planningItem.name;
+    planning.updatePlanningItem(id, name, type, percentage, amount);
+    // actualizar el tipo de las transacciones
+    if (oldName != name) {
+      for (Transaction transaction in income) {
+        if (transaction.type == oldName) {
+          transaction.updateType(name);
+        }
+      }
+    }
+  }
 }

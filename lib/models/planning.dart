@@ -106,9 +106,16 @@ class PlanningItem {
     this.value = value;
   }
 
-  void update(String name, String type, int percentage, int amount) {
-    this.name = name;
-    this.type = type;
-    value = type == 'percentage' ? percentage : amount;
+  void update(String newName, String newType, int newPercentage, int newAmount) {
+    print('update $name $type $value');
+    print('to $newName $newType $newPercentage $newAmount');
+    name = newName;
+    type = newType;
+    value = newType == 'percentage' ? newPercentage : newAmount;
+
+  }
+
+  String getName(){
+    return name;
   }
 }

@@ -10,9 +10,11 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
       .firstWhere((element) => element.id == id);
   String name = planning.name;
   String type = planning.type;
-  final amountController = TextEditingController(
+  int amount = planning.type == 'fixed' ? planning.value : 0;
+  int percentage = planning.type == 'percentage' ? planning.value : 0;
+  final _amountController = TextEditingController(
       text: type == 'fixed' ? planning.value.toString() : '');
-  final percentageController = TextEditingController(
+  final _percentageController = TextEditingController(
       text: type == 'percentage' ? planning.value.toString() : '');
 
   showDialog(
@@ -34,22 +36,25 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                   controller: TextEditingController(text: name),
                 ),
                 TextField(
+                  controller: _amountController,
                   decoration:
                       const InputDecoration(labelText: 'Monto a planificar'),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
-                    amountController.text = value;
+                    print(value);
+                    amount = int.tryParse(value) ?? 0;
                   },
-                  controller: amountController,
+                  
                 ),
                 TextField(
+                  controller: _percentageController,
                   decoration: const InputDecoration(
                       labelText: 'Porcentaje a planificar'),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
-                    percentageController.text = value;
+                    percentage = int.tryParse(value) ?? 0;
                   },
-                  controller: percentageController,
+                  
                 ),
                 DropdownButtonFormField(
                   items: const [
@@ -78,12 +83,8 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                 child: const Text('Cancelar')),
             TextButton(
                 onPressed: () {
-                  planning.update(
-                    name,
-                    type,
-                    int.parse(amountController.text),
-                    int.parse(percentageController.text),
-                  );
+                  appController.updatePlanningItem(currentDate,
+                      id, name, type, percentage, amount);
                   callback();
                   Navigator.pop(context);
                 },

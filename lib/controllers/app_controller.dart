@@ -271,4 +271,10 @@ class AppController {
       return 0;
     }
   }
+
+  void updatePlanningItem(DateTime time, int id, String name, String type,
+      int percentage, int amount) {
+    user!.updatePlanningItem(time, id, name, type, percentage, amount);
+    saveUser();
+  }
 }

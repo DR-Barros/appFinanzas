@@ -9,7 +9,7 @@ class Transaction {
   final int amount;
   final DateTime date;
   final int toAccountID;
-  final String type;
+  String type;
 
   Transaction({
     required this.id,
@@ -45,5 +45,9 @@ class Transaction {
   String getAmountString() {
     final formatter = NumberFormat('#,##0', 'es_AR');
     return formatter.format(amount);
+  }
+
+  void updateType(String type) {
+    this.type = type;
   }
 }
