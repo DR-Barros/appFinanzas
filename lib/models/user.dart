@@ -223,7 +223,8 @@ class User {
             'name': item.name,
             'planningPercentage': item.type == 'percentage'
                 ? item.value
-                : (item.value * 100) / plan.planningIncome,
+                : plan.planningIncome== 0 ? 0 :
+                 ((item.value * 10000) / plan.planningIncome).round() / 100,
             'planningValue': item.type == 'percentage'
                 ? (item.value * plan.planningIncome) / 100
                 : item.value,
@@ -232,13 +233,13 @@ class User {
                 : item.value,
             'realPercentage': item.type == 'percentage'
                 ? item.value
-                : (item.value * 100) / totalRealValue,
+                : plan.planningIncome == 0 ? 0 :
+                ((item.value * 10000) / totalRealValue).round() / 100,
             'expense': getTotalTransactionsByMonthAndType(date, item.name),
             'difference': item.type == 'percentage'
-                ? item.value -
+                ? (item.value * totalRealValue) / 100 -
                     getTotalTransactionsByMonthAndType(date, item.name)
-                : (item.value * 100) / totalRealValue -
-                    getTotalTransactionsByMonthAndType(date, item.name),
+                : item.value - getTotalTransactionsByMonthAndType(date, item.name),
           });
         }
         planning.add(
@@ -246,11 +247,11 @@ class User {
             'id': -1,
             'type': 'percentage',
             'name': 'Ahorro',
-            'planningPercentage': 100 -
+            'planningPercentage': ((100 -
                 planning.fold(
                     0,
                     (previousValue, element) =>
-                        previousValue + element['planningPercentage']),
+                        previousValue + element['planningPercentage']))*100).round()/100,
             'planningValue': plan.planningIncome -
                 planning.fold(
                     0,
@@ -261,12 +262,12 @@ class User {
                     0,
                     (previousValue, element) =>
                         previousValue + element['realValue']),
-            'realPercentage': 100 -
+            'realPercentage': ((100 -
                 planning.fold(
                     0,
                     (previousValue, element) =>
-                        previousValue + element['realPercentage']),
-            'expense': totalRealValue - getTotalTransactionsByMonth(date),
+                        previousValue + element['realPercentage']))*100).round()/100,
+            'expense': getTotalTransactionsByMonthAndType(date, 'Ahorro'),
             'difference': 0,
           },
         );

@@ -18,6 +18,8 @@ void showAddTransactionModal(BuildContext context,
   List<Account> toAccounts = List.from(accounts);
   toAccounts.add(Account(id: -1, name: 'Pago', balance: 0));
   List<PlanningItem> typeTransaction = appController.getPlanningsByMouth(date);
+  typeTransaction.add(PlanningItem(id: -1, name: "transferencia entre cuentas", type: "transferencia", value: 0));
+  typeTransaction.add(PlanningItem(id: -2, name: "Ahorro", type: "Ahorro", value: 0));
 
   showDialog(
       context: context,
@@ -42,6 +44,18 @@ void showAddTransactionModal(BuildContext context,
                   },
                 ),
                 DateInputField(controller: _dateController),
+                DropdownButtonFormField(
+                    items: typeTransaction
+                        .map((transaction) => DropdownMenuItem(
+                              value: transaction.name,
+                              child: Text(transaction.name),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      type = value as String;
+                    },
+                    decoration: const InputDecoration(
+                        labelText: 'Tipo de transacción')),
                 DropdownButtonFormField(
                   items: accounts
                       .map((account) => DropdownMenuItem(
@@ -73,18 +87,7 @@ void showAddTransactionModal(BuildContext context,
                       ? 'La cuenta destino no puede ser la misma que la cuenta origen'
                       : null,
                 ),
-                DropdownButtonFormField(
-                    items: typeTransaction
-                        .map((transaction) => DropdownMenuItem(
-                              value: transaction.name,
-                              child: Text(transaction.name),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      type = value as String;
-                    },
-                    decoration: const InputDecoration(
-                        labelText: 'Tipo de transacción')),
+                
               ],
             ),
           ),
