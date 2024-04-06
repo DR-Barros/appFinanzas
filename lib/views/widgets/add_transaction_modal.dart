@@ -17,7 +17,10 @@ void showAddTransactionModal(BuildContext context,
 
   List<Account> toAccounts = List.from(accounts);
   toAccounts.add(Account(id: -1, name: 'Pago', balance: 0));
-  List<PlanningItem> typeTransaction = appController.getPlanningsByMouth(date);
+  //List<PlanningItem> typeTransaction = appController.getPlanningsByMouth(date);
+  // quiero que typeTransaction sea una copia de la lista de plannings, pero que no se modifique la lista original
+  
+  List<PlanningItem> typeTransaction = List.from(appController.getPlanningsByMouth(date));
   typeTransaction.add(PlanningItem(id: -1, name: "transferencia entre cuentas", type: "transferencia", value: 0));
   typeTransaction.add(PlanningItem(id: -2, name: "Ahorro", type: "Ahorro", value: 0));
 
