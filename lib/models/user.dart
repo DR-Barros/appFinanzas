@@ -318,4 +318,10 @@ class User {
       }
     }
   }
+
+  void update(String newName, String newEmail, String newPassword) {
+    name = newName;
+    email = newEmail;
+    password = newPassword;
+  }
 }

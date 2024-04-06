@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/views/widgets/edit_user_modal.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -39,6 +40,16 @@ class _UserScreenState extends State<UserScreen> {
               });
             },
             title: const Text('Mostrar ingresos planificados'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              showEditUserModal(context, () {
+                setState(() {
+                  userName = appController.getUserName();
+                });
+              });
+            },
+            child: const Text('Editar usuario', style: TextStyle(color: Colors.black)),
           ),
           ElevatedButton(
             onPressed: () {
