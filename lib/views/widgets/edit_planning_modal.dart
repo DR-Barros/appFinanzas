@@ -41,7 +41,6 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                       const InputDecoration(labelText: 'Monto a planificar'),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
-                    print(value);
                     amount = int.tryParse(value) ?? 0;
                   },
                   

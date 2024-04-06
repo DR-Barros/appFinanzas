@@ -4,7 +4,7 @@ import 'package:app_finanzas/models/account.dart';
 import 'package:flutter/material.dart';
 
 class AccountsScreen extends StatefulWidget {
-  const AccountsScreen({Key? key});
+  const AccountsScreen({super.key});
 
   @override
   _AccountsScreenState createState() => _AccountsScreenState();

@@ -107,8 +107,6 @@ class PlanningItem {
   }
 
   void update(String newName, String newType, int newPercentage, int newAmount) {
-    print('update $name $type $value');
-    print('to $newName $newType $newPercentage $newAmount');
     name = newName;
     type = newType;
     value = newType == 'percentage' ? newPercentage : newAmount;

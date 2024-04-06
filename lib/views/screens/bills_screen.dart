@@ -76,7 +76,7 @@ class _BillsScreenState extends State<BillsScreen> {
                   onPressed: () {
                     _nextMonth();
                   },
-                  icon: Icon(Icons.arrow_right)),
+                  icon: const Icon(Icons.arrow_right)),
             ],
           ),
           const SizedBox(height: 20),

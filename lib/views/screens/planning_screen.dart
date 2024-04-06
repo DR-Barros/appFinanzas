@@ -53,11 +53,11 @@ class _PlanningScreenState extends State<PlanningScreen> {
                       onPressed: () {
                         _previousMonth();
                       },
-                      icon: Icon(Icons.arrow_left)),
+                      icon: const Icon(Icons.arrow_left)),
                   Expanded(
                     child: Text(
                       'Planificación de $date',
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -65,7 +65,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                       onPressed: () {
                         _nextMonth();
                       },
-                      icon: Icon(Icons.arrow_right)),
+                      icon: const Icon(Icons.arrow_right)),
                 ],
               ),
               if (showPlanningIncome)
@@ -113,7 +113,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                             DataCell(Text(planning['difference'].toString())),
                             if (planning['id'] >= 0)
                             DataCell(IconButton(
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               onPressed: () {
                                 showEditPlanningModal(context, currentDate,
                                     appController.getPlanningsByMouth(currentDate), planning['id'],

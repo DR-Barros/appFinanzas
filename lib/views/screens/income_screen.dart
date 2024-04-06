@@ -61,7 +61,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
                   onPressed: () {
                     _nextMonth();
                   },
-                  icon: Icon(Icons.arrow_right)),
+                  icon: const Icon(Icons.arrow_right)),
             ],
           ),
           ListView.builder(

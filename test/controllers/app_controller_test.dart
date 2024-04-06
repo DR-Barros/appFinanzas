@@ -386,7 +386,7 @@ void main() {
       controller.addTransaction(
           'Transfer',
           1000,
-          DateTime.now().subtract(Duration(days: 60)),
+          DateTime.now().subtract(const Duration(days: 60)),
           controller.user!.accounts[0],
           controller.user!.accounts[1],
           "savings");

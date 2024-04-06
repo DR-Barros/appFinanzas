@@ -102,7 +102,7 @@ void main() {
       expect(account.type, 'savings');
     });
 
-    // Test para verificar la serialización de una instancia de Account a JSON.
+    /// Test para verificar que una instancia de Account es serialized a un mapa JSON.
     test('Account is serialized to JSON', () {
       final account = Account(
         id: 1,
@@ -203,7 +203,7 @@ void main() {
         id: '2',
         title: 'Transfer',
         amount: 25,
-        date: DateTime.now().subtract(Duration(days: 60)),
+        date: DateTime.now().subtract(const Duration(days: 60)),
         toAccountID: 2,
       );
       final account = Account(
