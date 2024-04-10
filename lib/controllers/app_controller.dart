@@ -71,48 +71,24 @@ class AppController {
       email: '',
       password: "",
       accounts: [],
-      income: [],
+      transactions: [],
     );
     saveUser();
   }
 
-  // Method to get the user name.
+  /// Method to get the user name.
   String getUserName() {
     return user?.name ?? 'No user';
   }
 
-  // Method to get the balance of the user.
+  /// Method to get the balance of the user.
   int getBalance() {
-    return user!.accounts.fold(
-      0,
-      (previousValue, element) => previousValue + element.balance,
-    );
+    return user!.getBalance();
   }
 
-  // Method to get the balance of the save accounts of the user.
+  /// Method to get the balance of the save accounts of the user.
   int getSaveBalance() {
-    return user!.accounts.fold(
-      0,
-      (previousValue, element) {
-        if (element.type == 'savings') {
-          return previousValue + element.balance;
-        } else {
-          return previousValue;
-        }
-      },
-    );
-  }
-
-  // Method to get the balance of the user in a string format.
-  String getBalanceString() {
-    final formatter = NumberFormat('#,##0', 'es_AR');
-    return formatter.format(getBalance());
-  }
-
-  // Method to get the balance of the save accounts of the user in a string format.
-  String getSaveBalanceString() {
-    final formatter = NumberFormat('#,##0', 'es_AR');
-    return formatter.format(getSaveBalance());
+    return user!.getSaveBalance();
   }
 
   // Method to add a income to the user
@@ -128,7 +104,10 @@ class AppController {
   // Method to add a transaction to the user
   void addTransaction(String title, int amount, DateTime date,
       Account? fromAccount, Account? toAccount, String type) {
-    if (user == null || fromAccount?.id == -1 || toAccount == null || fromAccount == null) {
+    if (user == null ||
+        fromAccount?.id == -1 ||
+        toAccount == null ||
+        fromAccount == null) {
       Logger().d('User is null, account ID is -1 or toAccount is null');
       return;
     }
@@ -157,18 +136,21 @@ class AppController {
   // Method to list the incomes of the user
   List<Transaction> getIncomes() {
     if (user != null) {
-      return user!.income;
-    } else {
-      return [];
+      return user!.transactions
+          .where((transaction) => transaction.type == 'income')
+          .toList();
     }
+    return [];
   }
 
   // Method to list the incomes of the user by month
   List<Transaction> getIncomesByMouth(DateTime date) {
     if (user != null) {
-      return user!.income
-          .where((income) =>
-              income.date.year == date.year && income.date.month == date.month)
+      return user!.transactions
+          .where((transaction) =>
+              transaction.date.year == date.year &&
+              transaction.date.month == date.month &&
+              transaction.type == 'income')
           .toList();
     } else {
       return [];
@@ -226,7 +208,7 @@ class AppController {
     if (user != null) {
       return user!.accounts.firstWhere((account) => account.id == id);
     } else {
-      return Account(id: -1, name: 'No account', balance: 0, type: '');
+      return Account(id: -1, name: 'No account', type: '');
     }
   }
 
