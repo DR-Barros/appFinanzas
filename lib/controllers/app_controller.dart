@@ -148,8 +148,9 @@ class AppController {
     if (user != null) {
       return user!.transactions
           .where((transaction) =>
-              transaction.date.year == date.year &&
-              transaction.date.month == date.month &&
+              transaction.date != null &&
+              transaction.date!.year == date.year &&
+              transaction.date!.month == date.month &&
               transaction.type == 'income')
           .toList();
     } else {

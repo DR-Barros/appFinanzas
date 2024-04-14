@@ -1,5 +1,4 @@
 import 'package:app_finanzas/models/transaction.dart';
-import 'package:intl/intl.dart';
 
 /*
   This class is used to store the bank account information of the user.
@@ -47,8 +46,9 @@ class Account {
       DateTime date, List<Transaction> transactions) {
     int total = 0;
     for (Transaction transaction in transactions) {
-      if (transaction.date.year == date.year &&
-          transaction.date.month == date.month) {
+      if (transaction.date != null &&
+          transaction.date!.year == date.year &&
+          transaction.date!.month == date.month) {
         total += transaction.amount;
       }
     }
@@ -59,8 +59,9 @@ class Account {
       DateTime date, String type, List<Transaction> transactions) {
     int total = 0;
     for (Transaction transaction in transactions) {
-      if (transaction.date.year == date.year &&
-          transaction.date.month == date.month &&
+      if (transaction.date != null &&
+          transaction.date!.year == date.year &&
+          transaction.date!.month == date.month &&
           transaction.type == type) {
         total += transaction.amount;
       }

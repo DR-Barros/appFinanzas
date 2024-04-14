@@ -1,4 +1,5 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
+import 'package:app_finanzas/utils/money_format.dart';
 import 'package:app_finanzas/views/widgets/add_account_modal.dart';
 import 'package:app_finanzas/models/account.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String dinero = appController.getBalanceString();
-    String dineroAhorro = appController.getSaveBalanceString();
+    String dinero = moneyFormatter(appController.getBalance());
+    String dineroAhorro = moneyFormatter(appController.getSaveBalance());
     List<Account> cuentas = appController.getSaveAccounts();
     List<Account> accounts = appController.getCurrentAccounts();
     List<Account> credit = appController.getCreditAccounts();
@@ -51,7 +52,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       final cuenta = cuentas[index];
                       return ListTile(
                         title: Text(cuenta.name),
-                        subtitle: Text(cuenta.getBalanceString()),
+                        subtitle: Text(moneyFormatter(cuenta
+                            .getBalance(appController.user!.transactions))),
                       );
                     },
                   ),
@@ -74,7 +76,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       final cuenta = credit[index];
                       return ListTile(
                         title: Text(cuenta.name),
-                        subtitle: Text(cuenta.balance.toString()),
+                        subtitle: Text(moneyFormatter(cuenta
+                            .getBalance(appController.user!.transactions))),
                       );
                     },
                   ),
@@ -97,14 +100,14 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       final cuenta = accounts[index];
                       return ListTile(
                         title: Text(cuenta.name),
-                        subtitle: Text(cuenta.balance.toString()),
+                        subtitle: Text(moneyFormatter(cuenta
+                            .getBalance(appController.user!.transactions))),
                       );
                     },
                   ),
                 ],
               ),
             )),
-            
           ],
         ),
       ),

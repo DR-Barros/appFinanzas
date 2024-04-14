@@ -95,7 +95,6 @@ class User {
       id: transactionId,
       title: 'Saldo inicial',
       amount: balance,
-      date: DateTime.now(),
       toAccountID: account.id,
       fromAccountID: -1,
     );
@@ -151,8 +150,9 @@ class User {
   int getIncomesByMonth(DateTime date) {
     int totalIncome = 0;
     for (Transaction transaction in transactions) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year &&
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year &&
           transaction.type == 'income') {
         totalIncome += transaction.amount;
       }
@@ -217,8 +217,9 @@ class User {
   List<Transaction> getTransactionsByMonth(DateTime date) {
     List<Transaction> transactions = [];
     for (Transaction transaction in this.transactions) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year) {
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year) {
         transactions.add(transaction);
       }
     }
@@ -229,8 +230,9 @@ class User {
   int getAmountOfTransactionsByMonth(DateTime date) {
     int total = 0;
     for (Transaction transaction in transactions) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year) {
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year) {
         if (transaction.toAccountID != -1) {
           total += transaction.amount;
         } else if (transaction.fromAccountID != -1) {
@@ -245,8 +247,9 @@ class User {
   int getTotalTransactionsByMonthAndType(DateTime date, String type) {
     int total = 0;
     for (Transaction transaction in transactions) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year &&
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year &&
           transaction.type == type) {
         total += transaction.amount;
       }

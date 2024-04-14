@@ -1,6 +1,7 @@
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/transaction.dart';
+import 'package:app_finanzas/utils/money_format.dart';
 import 'package:app_finanzas/views/widgets/add_transaction_modal.dart';
 import 'package:flutter/material.dart';
 
@@ -50,14 +51,10 @@ class _BillsScreenState extends State<BillsScreen> {
         appController.getTransactionsByMonth(currentDate);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Planificación de gastos'),
+        title: const Text('Gastos'),
       ),
       body: Column(
         children: <Widget>[
-          Text(
-            'Planificación de gastos de $userName',
-            style: const TextStyle(fontSize: 20),
-          ),
           Row(
             children: <Widget>[
               IconButton(
@@ -88,9 +85,9 @@ class _BillsScreenState extends State<BillsScreen> {
               return ListTile(
                 title: Text(transaction.title),
                 subtitle: Text(
-                    '${transaction.getAmountString()} -> ${_accountName(transaction.toAccountID)}'),
+                    '${_accountName(transaction.fromAccountID)} -> ${_accountName(transaction.toAccountID)}     ${moneyFormatter(transaction.amount)}'),
                 trailing: Text(
-                    '${transaction.date.day}/${transaction.date.month}/${transaction.date.year}'),
+                    '${transaction.date!.day}/${transaction.date!.month}/${transaction.date!.year}'),
               );
             },
           ),
