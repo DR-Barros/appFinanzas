@@ -45,7 +45,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
           title: const Text('Planificación de gastos'),
         ),
         body: SingleChildScrollView(
-          child:  Column(
+          child: Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
@@ -69,99 +69,109 @@ class _PlanningScreenState extends State<PlanningScreen> {
                 ],
               ),
               if (showPlanningIncome)
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Text(
-                      'Ingresos planificados: $planningIncome',
-                    )),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        ShowEditPlanningIncomeModal(context, currentDate,
-                            appController.getPlanningIncomeByMonth(currentDate), 
-                            () {
-                          setState(() {});
-                        });
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: const Text('Editar'),
-                    )
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: Text(
+                        'Ingresos planificados: $planningIncome',
+                      )),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          ShowEditPlanningIncomeModal(
+                              context,
+                              currentDate,
+                              appController
+                                  .getPlanningIncomeByMonth(currentDate), () {
+                            setState(() {});
+                          });
+                        },
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Editar'),
+                      )
+                    ],
+                  ),
                 ),
-              ),
               if (!showPlanningIncome)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 10,
-                  columns: const <DataColumn>[
-                    DataColumn(label: Text('Item'),),
-                    DataColumn(label: Text('\$')),
-                    DataColumn(label: Text('%')),
-                    DataColumn(label: Text('Gasto')),
-                    DataColumn(label: Text('Diferencia')),
-                    DataColumn(label: Text('editar')),
-                  ],
-                  rows: plannings
-                      .map((planning) => DataRow(cells: <DataCell>[
-                            DataCell(Text(planning['name'])),
-                            DataCell(Text(planning['realValue'].toString())),
-                            DataCell(Text(planning['realPercentage'].toString())),
-                            DataCell(Text(planning['expense'].toString())),
-                            DataCell(Text(planning['difference'].toString())),
-                            if (planning['id'] >= 0)
-                            DataCell(IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                showEditPlanningModal(context, currentDate,
-                                    appController.getPlanningsByMouth(currentDate), planning['id'],
-                                    () {
-                                  setState(() {});
-                                });
-                              },
-                            ))  
-                            else
-                            const DataCell(Text(''))
-                          ]))
-                      .toList(),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columnSpacing: 10,
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text('Item'),
+                      ),
+                      DataColumn(label: Text('\$')),
+                      DataColumn(label: Text('%')),
+                      DataColumn(label: Text('Gasto')),
+                      DataColumn(label: Text('Diferencia')),
+                      DataColumn(label: Text('editar')),
+                    ],
+                    rows: plannings
+                        .map((planning) => DataRow(cells: <DataCell>[
+                              DataCell(Text(planning['name'])),
+                              DataCell(Text(planning['realValue'].toString())),
+                              DataCell(
+                                  Text(planning['realPercentage'].toString())),
+                              DataCell(Text(planning['expense'].toString())),
+                              DataCell(Text(planning['difference'].toString())),
+                              if (planning['id'] >= 0)
+                                DataCell(IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    showEditPlanningModal(
+                                        context,
+                                        currentDate,
+                                        appController
+                                            .getPlanningsByMouth(currentDate),
+                                        planning['id'], () {
+                                      setState(() {});
+                                    });
+                                  },
+                                ))
+                              else
+                                const DataCell(Text(''))
+                            ]))
+                        .toList(),
+                  ),
                 ),
-              ),
               if (showPlanningIncome)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 10,
-                  columns: const <DataColumn>[
-                    DataColumn(
-                      label: Text('Item'),
-                    ),
-                    DataColumn(
-                      label: Text('P. \$'),
-                    ),
-                    DataColumn(
-                      label: Text('P. %'),
-                    ),
-                    DataColumn(label: Text('\$')),
-                    DataColumn(label: Text('%')),
-                    DataColumn(label: Text('Gasto')),
-                    DataColumn(label: Text('Diferencia')),
-                  ],
-                  rows: plannings
-                      .map((planning) => DataRow(cells: <DataCell>[
-                            DataCell(Text(planning['name'])),
-                            DataCell(Text(planning['planningValue'].toString())),
-                            DataCell(
-                                Text(planning['planningPercentage'].toString())),
-                            DataCell(Text(planning['realValue'].toString())),
-                            DataCell(Text(planning['realPercentage'].toString())),
-                            DataCell(Text(planning['expense'].toString())),
-                            DataCell(Text(planning['difference'].toString())),
-                          ]))
-                      .toList(),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columnSpacing: 10,
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text('Item'),
+                      ),
+                      DataColumn(
+                        label: Text('P. \$'),
+                      ),
+                      DataColumn(
+                        label: Text('P. %'),
+                      ),
+                      DataColumn(label: Text('\$')),
+                      DataColumn(label: Text('%')),
+                      DataColumn(label: Text('Gasto')),
+                      DataColumn(label: Text('Diferencia')),
+                    ],
+                    rows: plannings
+                        .map((planning) => DataRow(cells: <DataCell>[
+                              DataCell(Text(planning['name'])),
+                              DataCell(
+                                  Text(planning['planningValue'].toString())),
+                              DataCell(Text(
+                                  planning['planningPercentage'].toString())),
+                              DataCell(Text(planning['realValue'].toString())),
+                              DataCell(
+                                  Text(planning['realPercentage'].toString())),
+                              DataCell(Text(planning['expense'].toString())),
+                              DataCell(Text(planning['difference'].toString())),
+                            ]))
+                        .toList(),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

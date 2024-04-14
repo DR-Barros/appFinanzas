@@ -11,7 +11,7 @@ class User {
   String email;
   String? password;
   List<Account> accounts = [];
-  List<Transaction> income = [];
+  List<Transaction> transactions = [];
   List<Planning> plannings = [];
 
   User(
@@ -20,13 +20,13 @@ class User {
       required this.email,
       this.password,
       List<Account>? accounts,
-      List<Transaction>? income,
+      List<Transaction>? transactions,
       List<Planning>? plannings}) {
     if (accounts != null) {
       this.accounts.addAll(accounts);
     }
-    if (income != null) {
-      this.income.addAll(income);
+    if (transactions != null) {
+      this.transactions.addAll(transactions);
     }
     if (plannings != null) {
       this.plannings.addAll(plannings);
@@ -45,7 +45,7 @@ class User {
       accounts: (json['accounts'] as List).map((account) {
         return Account.fromJson(account);
       }).toList(),
-      income: (json['income'] as List)
+      transactions: (json['income'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
           .toList(),
       plannings: (json['plannings'] as List)
@@ -61,33 +61,63 @@ class User {
         'email': email,
         'password': password,
         'accounts': accounts.map((account) => account.toJson()).toList(),
-        'income': income.map((transaction) => transaction.toJson()).toList(),
+        'transactions':
+            transactions.map((transaction) => transaction.toJson()).toList(),
         'plannings': plannings.map((planning) => planning.toJson()).toList(),
       };
 
   /// Method to add an account to the user's list of accounts.
   void addAccount(String name, int balance, String type) {
-    String typeAccount = type == 'Ahorro' ? 'savings' : type == 'Corriente' ? 'current' : 'credit';
+    int id = 0;
+    accounts.forEach((account) {
+      if (account.id >= id) {
+        id = account.id + 1;
+      }
+    });
+    String typeAccount = type == 'Ahorro'
+        ? 'savings'
+        : type == 'Corriente'
+            ? 'current'
+            : 'credit';
     final account = Account(
-      id: accounts.length,
+      id: id,
       name: name,
-      balance: balance,
       type: typeAccount,
     );
     accounts.add(account);
+    int transactionId = 0;
+    transactions.forEach((transaction) {
+      if (transaction.id >= transactionId) {
+        transactionId = transaction.id + 1;
+      }
+    });
+    final transaction = Transaction(
+      id: transactionId,
+      title: 'Saldo inicial',
+      amount: balance,
+      toAccountID: account.id,
+      fromAccountID: -1,
+    );
+    transactions.add(transaction);
   }
 
   /// Method to add a transaction to the user's list of income transactions.
   void addIncome(String title, int amount, DateTime date, Account toAccount) {
+    int id = 0;
+    transactions.forEach((transaction) {
+      if (transaction.id >= id) {
+        id = transaction.id + 1;
+      }
+    });
     final transaction = Transaction(
-      id: income.length.toString(),
+      id: id,
       title: title,
       amount: amount,
       date: date,
       toAccountID: toAccount.id,
+      fromAccountID: -1,
     );
-    income.add(transaction);
-    toAccount.addIncome(transaction);
+    transactions.add(transaction);
   }
 
   /// Method to add a planning to the user's list of plannings.
@@ -119,9 +149,11 @@ class User {
   // Method to get the total income of the user for the given month.
   int getIncomesByMonth(DateTime date) {
     int totalIncome = 0;
-    for (Transaction transaction in income) {
-      if (transaction.date.month == date.month &&
-          transaction.date.year == date.year) {
+    for (Transaction transaction in transactions) {
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year &&
+          transaction.type == 'income') {
         totalIncome += transaction.amount;
       }
     }
@@ -131,18 +163,22 @@ class User {
   // Method to add a transaction to the Account with the given ID.
   void addTransaction(String title, int amount, DateTime date,
       Account fromAccount, Account toAccount, String type) {
+    int id = 0;
+    transactions.forEach((transaction) {
+      if (transaction.id >= id) {
+        id = transaction.id + 1;
+      }
+    });
     final transaction = Transaction(
-      id: income.length.toString(),
+      id: id,
       title: title,
       amount: amount,
       date: date,
       toAccountID: toAccount.id,
+      fromAccountID: fromAccount.id,
       type: type,
     );
-    fromAccount.addTransaction(transaction);
-    if (toAccount.id != -1) {
-      toAccount.addIncome(transaction);
-    }
+    transactions.add(transaction);
   }
 
   void fromJson(Map<String, dynamic> json) {
@@ -154,25 +190,55 @@ class User {
     accounts.addAll((json['accounts'] as List)
         .map((account) => Account.fromJson(account))
         .toList());
-    income.clear();
-    income.addAll((json['income'] as List)
+    transactions.clear();
+    transactions.addAll((json['income'] as List)
         .map((transaction) => Transaction.fromJson(transaction))
         .toList());
   }
 
+  int getBalance() {
+    int balance = 0;
+    for (Account account in accounts) {
+      balance += account.getBalance(transactions);
+    }
+    return balance;
+  }
+
+  int getSaveBalance() {
+    int balance = 0;
+    for (Account account in accounts) {
+      if (account.type == 'savings') {
+        balance += account.getBalance(transactions);
+      }
+    }
+    return balance;
+  }
+
   List<Transaction> getTransactionsByMonth(DateTime date) {
     List<Transaction> transactions = [];
-    for (Account account in accounts) {
-      transactions.addAll(account.getTransactionsByMonth(date));
+    for (Transaction transaction in this.transactions) {
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year) {
+        transactions.add(transaction);
+      }
     }
     return transactions;
   }
 
   /// Method to get the total mount of the user's transactions for the given month.
-  int getTotalTransactionsByMonth(DateTime date) {
+  int getAmountOfTransactionsByMonth(DateTime date) {
     int total = 0;
-    for (Account account in accounts) {
-      total += account.getTotalTransactionsByMonth(date);
+    for (Transaction transaction in transactions) {
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year) {
+        if (transaction.toAccountID != -1) {
+          total += transaction.amount;
+        } else if (transaction.fromAccountID != -1) {
+          total -= transaction.amount;
+        }
+      }
     }
     return total;
   }
@@ -180,8 +246,13 @@ class User {
   /// Method to get the total mount of the user's transactions for the given month
   int getTotalTransactionsByMonthAndType(DateTime date, String type) {
     int total = 0;
-    for (Account account in accounts) {
-      total += account.getTotalTransactionsByMonthAndType(date, type);
+    for (Transaction transaction in transactions) {
+      if (transaction.date != null &&
+          transaction.date!.month == date.month &&
+          transaction.date!.year == date.year &&
+          transaction.type == type) {
+        total += transaction.amount;
+      }
     }
     return total;
   }
@@ -202,8 +273,6 @@ class User {
     return planningItems;
   }
 
-
-
   /// Method to show the planning of the user for the given month.
   /// If the planning does not exist, it is created.
   /// The planning is returned as a list of maps with the following
@@ -223,8 +292,10 @@ class User {
             'name': item.name,
             'planningPercentage': item.type == 'percentage'
                 ? item.value
-                : plan.planningIncome== 0 ? 0 :
-                 ((item.value * 10000) / plan.planningIncome).round() / 100,
+                : plan.planningIncome == 0
+                    ? 0
+                    : ((item.value * 10000) / plan.planningIncome).round() /
+                        100,
             'planningValue': item.type == 'percentage'
                 ? (item.value * plan.planningIncome) / 100
                 : item.value,
@@ -233,13 +304,15 @@ class User {
                 : item.value,
             'realPercentage': item.type == 'percentage'
                 ? item.value
-                : plan.planningIncome == 0 ? 0 :
-                ((item.value * 10000) / totalRealValue).round() / 100,
+                : plan.planningIncome == 0
+                    ? 0
+                    : ((item.value * 10000) / totalRealValue).round() / 100,
             'expense': getTotalTransactionsByMonthAndType(date, item.name),
             'difference': item.type == 'percentage'
                 ? (item.value * totalRealValue) / 100 -
                     getTotalTransactionsByMonthAndType(date, item.name)
-                : item.value - getTotalTransactionsByMonthAndType(date, item.name),
+                : item.value -
+                    getTotalTransactionsByMonthAndType(date, item.name),
           });
         }
         planning.add(
@@ -248,10 +321,14 @@ class User {
             'type': 'percentage',
             'name': 'Ahorro',
             'planningPercentage': ((100 -
-                planning.fold(
-                    0,
-                    (previousValue, element) =>
-                        previousValue + element['planningPercentage']))*100).round()/100,
+                            planning.fold(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue +
+                                    element['planningPercentage'])) *
+                        100)
+                    .round() /
+                100,
             'planningValue': plan.planningIncome -
                 planning.fold(
                     0,
@@ -263,10 +340,14 @@ class User {
                     (previousValue, element) =>
                         previousValue + element['realValue']),
             'realPercentage': ((100 -
-                planning.fold(
-                    0,
-                    (previousValue, element) =>
-                        previousValue + element['realPercentage']))*100).round()/100,
+                            planning.fold(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue +
+                                    element['realPercentage'])) *
+                        100)
+                    .round() /
+                100,
             'expense': getTotalTransactionsByMonthAndType(date, 'Ahorro'),
             'difference': 0,
           },
@@ -280,8 +361,8 @@ class User {
             'planningValue': plan.planningIncome,
             'realValue': totalRealValue,
             'realPercentage': 100,
-            'expense': getTotalTransactionsByMonth(date),
-            'difference': totalRealValue - getTotalTransactionsByMonth(date),
+            'expense': getAmountOfTransactionsByMonth(date),
+            'difference': totalRealValue - getAmountOfTransactionsByMonth(date),
           },
         );
         return planning;
@@ -290,7 +371,6 @@ class User {
     addPlanning(date);
     return showPlanningByMonth(date);
   }
-
 
   int getPlanningIncomeByMonth(DateTime date) {
     String planningId = "${date.month}-${date.year}";
@@ -312,7 +392,7 @@ class User {
     planning.updatePlanningItem(id, name, type, percentage, amount);
     // actualizar el tipo de las transacciones
     if (oldName != name) {
-      for (Transaction transaction in income) {
+      for (Transaction transaction in transactions) {
         if (transaction.type == oldName) {
           transaction.updateType(name);
         }

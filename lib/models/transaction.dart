@@ -1,13 +1,10 @@
-import 'package:intl/intl.dart';
-
-/*
-* Model class for Transaction
-*/
+/// Transaction model
 class Transaction {
-  final String id;
+  final int id;
   final String title;
   final int amount;
-  final DateTime date;
+  DateTime? date;
+  final int fromAccountID;
   final int toAccountID;
   String type;
 
@@ -15,10 +12,15 @@ class Transaction {
     required this.id,
     required this.title,
     required this.amount,
-    required this.date,
     required this.toAccountID,
+    required this.fromAccountID,
+    date,
     this.type = 'income',
-  });
+  }) {
+    if (date != null) {
+      this.date = date;
+    }
+  }
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
@@ -27,6 +29,7 @@ class Transaction {
       amount: json['amount'],
       date: DateTime.parse(json['date']),
       toAccountID: json['toAccountID'],
+      fromAccountID: json['fromAccountID'],
       type: json['type'],
     );
   }
@@ -36,15 +39,11 @@ class Transaction {
       'id': id,
       'title': title,
       'amount': amount,
-      'date': date.toIso8601String(),
+      'date': date?.toIso8601String(),
       'toAccountID': toAccountID,
+      'fromAccountID': fromAccountID,
       'type': type,
     };
-  }
-
-  String getAmountString() {
-    final formatter = NumberFormat('#,##0', 'es_AR');
-    return formatter.format(amount);
   }
 
   void updateType(String type) {
