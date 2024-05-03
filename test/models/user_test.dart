@@ -21,7 +21,7 @@ void main() {
       expect(user.email, 'john@example.com');
       expect(user.password, 'password123');
       expect(user.accounts, isEmpty);
-      expect(user.income, isEmpty);
+      expect(user.transactions, isEmpty);
     });
 
     // Test para verificar la creación de una instancia de User con cuentas y transacciones.
@@ -30,26 +30,26 @@ void main() {
       final account1 = Account(
         id: 1,
         name: 'Checking Account',
-        balance: 100,
       );
       final account2 = Account(
         id: 2,
         name: 'Savings Account',
-        balance: 200,
       );
       final transaction1 = Transaction(
-        id: '1',
+        id: 1,
         title: 'Payment',
         amount: 50,
         date: DateTime.now(),
         toAccountID: 2,
+        fromAccountID: -1,
       );
       final transaction2 = Transaction(
-        id: '2',
+        id: 2,
         title: 'Transfer',
-        amount: 25,
+        amount: 20,
         date: DateTime.now(),
-        toAccountID: 2,
+        toAccountID: 1,
+        fromAccountID: 2,
       );
       final user = User(
         id: '1',
@@ -57,7 +57,7 @@ void main() {
         email: 'John@mail.com',
         password: "password123",
         accounts: [account1, account2],
-        income: [transaction1, transaction2],
+        transactions: [transaction1, transaction2],
       );
 
       expect(user.id, '1');
@@ -65,7 +65,7 @@ void main() {
       expect(user.email, 'John@mail.com');
       expect(user.password, 'password123');
       expect(user.accounts, [account1, account2]);
-      expect(user.income, [transaction1, transaction2]);
+      expect(user.transactions, [transaction1, transaction2]);
     });
 
     // Test para verificar la creación de una instancia de User a partir de un mapa JSON.
@@ -76,7 +76,7 @@ void main() {
         'email': 'john@example.com',
         'password': 'password123',
         'accounts': [],
-        'income': [],
+        'transactions': [],
         'plannings': [],
       };
       final user = User.fromJson(userJson);
@@ -86,7 +86,7 @@ void main() {
       expect(user.email, 'john@example.com');
       expect(user.password, 'password123');
       expect(user.accounts, isEmpty);
-      expect(user.income, isEmpty);
+      expect(user.transactions, isEmpty);
       expect(user.plannings, isEmpty);
     });
 
@@ -98,7 +98,7 @@ void main() {
         email: 'john@example.com',
         password: 'password123',
         accounts: [],
-        income: [],
+        transactions: [],
         plannings: [],
       );
       final userJson = user.toJson();
@@ -108,7 +108,7 @@ void main() {
       expect(userJson['email'], 'john@example.com');
       expect(userJson['password'], 'password123');
       expect(userJson['accounts'], isEmpty);
-      expect(userJson['income'], isEmpty);
+      expect(userJson['transactions'], isEmpty);
       expect(userJson['plannings'], isEmpty);
     });
 
@@ -123,7 +123,7 @@ void main() {
 
       expect(user.accounts.length, 1);
       expect(user.accounts[0].name, 'Checking Account');
-      expect(user.accounts[0].balance, 100);
+      expect(user.accounts[0].getBalance(user.getTransactionsByMonth(DateTime.now())), 100);
       expect(user.accounts[0].type, 'current');
       expect(user.accounts[0].id, 0);
 
@@ -131,7 +131,7 @@ void main() {
 
       expect(user.accounts.length, 2);
       expect(user.accounts[1].name, 'Savings Account');
-      expect(user.accounts[1].balance, 200);
+      expect(user.accounts[1].getBalance(user.getTransactionsByMonth(DateTime.now())), 200);
       expect(user.accounts[1].type, 'savings');
       expect(user.accounts[1].id, 1);
 
@@ -139,7 +139,7 @@ void main() {
 
       expect(user.accounts.length, 3);
       expect(user.accounts[2].name, 'Investment Account');
-      expect(user.accounts[2].balance, 300);
+      expect(user.accounts[2].getBalance(user.getTransactionsByMonth(DateTime.now())), 300);
       expect(user.accounts[2].type, 'credit');
       expect(user.accounts[2].id, 2);
     });

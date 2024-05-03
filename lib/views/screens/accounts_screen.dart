@@ -30,7 +30,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
           children: <Widget>[
             const SizedBox(height: 20),
             Text(
-              'Tienes \$ $dinero en tus cuentas',
+              'Tienes $dinero en tus cuentas',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Card(

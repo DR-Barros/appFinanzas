@@ -16,36 +16,38 @@ void showAddIncomeModal(BuildContext context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Agregar ingreso'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                decoration: const InputDecoration(labelText: 'Concepto'),
-                onChanged: (value) {
-                  title = value;
-                },
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Monto'),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  amount = int.parse(value);
-                },
-              ),
-              DateInputField(controller: _dateController),
-              DropdownButtonFormField(
-                items: accounts
-                    .map((account) => DropdownMenuItem(
-                          value: account,
-                          child: Text(account.name),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  toAccount = value as Account;
-                },
-                decoration: const InputDecoration(labelText: 'Cuenta'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Concepto'),
+                  onChanged: (value) {
+                    title = value;
+                  },
+                ),
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Monto'),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    amount = int.parse(value);
+                  },
+                ),
+                DateInputField(controller: _dateController),
+                DropdownButtonFormField(
+                  items: accounts
+                      .map((account) => DropdownMenuItem(
+                            value: account,
+                            child: Text(account.name),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    toAccount = value as Account;
+                  },
+                  decoration: const InputDecoration(labelText: 'Cuenta'),
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
