@@ -27,7 +27,7 @@ class Transaction {
       id: json['id'],
       title: json['title'],
       amount: json['amount'],
-      date: DateTime.parse(json['date']),
+      date: json['date'] != null ? DateTime.parse(json['date']) : null,
       toAccountID: json['toAccountID'],
       fromAccountID: json['fromAccountID'],
       type: json['type'],

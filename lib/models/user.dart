@@ -42,10 +42,10 @@ class User {
       name: json['name'],
       email: json['email'],
       password: json['password'],
-      accounts: (json['accounts'] as List).map((account) {
-        return Account.fromJson(account);
-      }).toList(),
-      transactions: (json['income'] as List)
+      accounts: (json['accounts'] as List)
+          .map((account) => Account.fromJson(account))
+          .toList(),
+      transactions: (json['transactions'] as List)
           .map((transaction) => Transaction.fromJson(transaction))
           .toList(),
       plannings: (json['plannings'] as List)
@@ -120,11 +120,28 @@ class User {
     transactions.add(transaction);
   }
 
-  /// Method to add a planning to the user's list of plannings.
+  /// Method to add a planning to the user's list of plannings. if exists a planning for the given month, it is not added.
+  /// if exists a planning for the before month, create a new planning for the given month with the same values.
   void addPlanning(DateTime date) {
     String planningId = "${date.month}-${date.year}";
-    plannings
-        .add(Planning(id: planningId, planningIncome: getIncomesByMonth(date)));
+    for (Planning plan in plannings) {
+      if (plan.id == planningId) {
+        return;
+      }
+    }
+    String beforePlanningId = "${date.month - 1}-${date.year}";
+    for (Planning plan in plannings) {
+      if (plan.id == beforePlanningId) {
+        Planning newPlan = Planning(id: planningId, planningIncome: plan.planningIncome);
+        for (PlanningItem item in plan.planningItems) {
+          newPlan.addPlanningItem(item.name, item.type, item.value);
+        }
+        plannings.add(newPlan);
+        return;
+      }
+    }
+    Planning newPlan = Planning(id: planningId, planningIncome: 0);
+    plannings.add(newPlan);
   }
 
   /// Method to edit the planning income of the user for the given month.
