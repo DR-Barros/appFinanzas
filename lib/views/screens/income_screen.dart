@@ -64,20 +64,21 @@ class _IncomeScreenState extends State<IncomeScreen> {
                   icon: const Icon(Icons.arrow_right)),
             ],
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: incomes.length,
-            itemBuilder: (context, index) {
-              final income = incomes[index];
-              return ListTile(
-                title: Text(income.title),
-                subtitle: Text(
-                    'Monto: \$${income.amount}   ->   ${appController.getAccountById(income.toAccountID).name}'),
-                trailing: Text(
-                    '${income.date!.day}/${income.date!.month}/${income.date!.year}'),
-              );
-            },
-          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  for (var income in incomes)
+                    ListTile(
+                      title: Text(income.title),
+                      subtitle: Text('Monto: \$${income.amount}   ->   ${appController.getAccountById(income.toAccountID).name}'),
+                      trailing: Text('${income.date!.day}/${income.date!.month}/${income.date!.year}'),
+                    )
+                ],
+              ),
+              
+            )
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(

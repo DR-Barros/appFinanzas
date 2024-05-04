@@ -77,19 +77,19 @@ class _BillsScreenState extends State<BillsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
-              return ListTile(
-                title: Text(transaction.title),
-                subtitle: Text(
-                    '${_accountName(transaction.fromAccountID)} -> ${_accountName(transaction.toAccountID)}     ${moneyFormatter(transaction.amount)}'),
-                trailing: Text(
-                    '${transaction.date!.day}/${transaction.date!.month}/${transaction.date!.year}'),
-              );
-            },
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  for (var transaction in transactions)
+                    ListTile(
+                      title: Text(transaction.title),
+                      subtitle: Text('${_accountName(transaction.fromAccountID)} -> ${_accountName(transaction.toAccountID)}     ${moneyFormatter(transaction.amount)}'),
+                      trailing: Text('${transaction.date!.day}/${transaction.date!.month}/${transaction.date!.year}'),
+                    )
+                ],
+              ),
+            ),
           ),
         ],
       ),

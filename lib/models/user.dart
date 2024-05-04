@@ -208,7 +208,7 @@ class User {
         .map((account) => Account.fromJson(account))
         .toList());
     transactions.clear();
-    transactions.addAll((json['income'] as List)
+    transactions.addAll((json['transaction'] as List)
         .map((transaction) => Transaction.fromJson(transaction))
         .toList());
   }
@@ -224,7 +224,7 @@ class User {
   int getSaveBalance() {
     int balance = 0;
     for (Account account in accounts) {
-      if (account.type == 'savings') {
+      if (account.type == AccountType.savings) {
         balance += account.getBalance(transactions);
       }
     }

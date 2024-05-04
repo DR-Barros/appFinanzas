@@ -13,8 +13,8 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
   Account? toAccount;
   Account? fromAccount;
   String type = '';
+  int installment = 0; // numero de cuotas
   // agregamos una cuenta "pago" con id -1 para que el usuario pueda seleccionar que no se va a transferir a ninguna cuenta
-
   List<Account> toAccounts = List.from(accounts);
   toAccounts.add(Account(
     id: -1,
@@ -79,7 +79,9 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                               ))
                           .toList(),
                       onChanged: (value) {
-                        fromAccount = value;
+                        setState(() {
+                          fromAccount = value;
+                        });
                       },
                       decoration: const InputDecoration(labelText: 'Cuenta origen'),
                       validator: (value) => value == toAccount
@@ -102,6 +104,14 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                         validator: (value) => value == fromAccount
                             ? 'La cuenta destino no puede ser la misma que la cuenta origen'
                             : null,
+                      ),
+                    if (fromAccount != null && fromAccount!.type == AccountType.credit)
+                      TextField(
+                        decoration: const InputDecoration(labelText: 'Número de cuotas'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          installment = int.parse(value);
+                        },
                       ),
                   ],
                 ),
@@ -126,13 +136,27 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                       } else if (type == '') {
                         return;
                       } 
-                      appController.addTransaction(
-                          title,
-                          amount,
-                          DateTime.parse(_dateController.text),
-                          fromAccount,
-                          toAccount,
-                          type);
+                      if (installment > 0){
+                        for (int i = 0; i < installment; i++){
+                          DateTime date = DateTime.parse(_dateController.text);
+                          date = date.add(Duration(days: 30 * i));
+                          appController.addTransaction(
+                            '$title cuota ${i + 1}/$installment',
+                            (amount/installment).round(),
+                            date,
+                            fromAccount,
+                            toAccount,
+                            type);
+                        }
+                      }  else {
+                        appController.addTransaction(
+                            title,
+                            amount,
+                            DateTime.parse(_dateController.text),
+                            fromAccount,
+                            toAccount,
+                            type);
+                      }
                       callback();
                       Navigator.of(context).pop();
                     },
