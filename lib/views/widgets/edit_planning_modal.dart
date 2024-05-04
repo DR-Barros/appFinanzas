@@ -20,7 +20,8 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
   showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
           title: const Text('Editar item de planificación'),
           content: SingleChildScrollView(
             child: Column(
@@ -35,26 +36,6 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                   },
                   controller: TextEditingController(text: name),
                 ),
-                TextField(
-                  controller: _amountController,
-                  decoration:
-                      const InputDecoration(labelText: 'Monto a planificar'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    amount = int.tryParse(value) ?? 0;
-                  },
-                  
-                ),
-                TextField(
-                  controller: _percentageController,
-                  decoration: const InputDecoration(
-                      labelText: 'Porcentaje a planificar'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    percentage = int.tryParse(value) ?? 0;
-                  },
-                  
-                ),
                 DropdownButtonFormField(
                   items: const [
                     DropdownMenuItem(
@@ -67,10 +48,35 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                     ),
                   ],
                   onChanged: (value) {
-                    type = value.toString();
+                    setState(() {
+                      type = value.toString();
+                    });
                   },
                   value: type,
                 ),
+                if (type == 'fixed')
+                TextField(
+                  controller: _amountController,
+                  decoration:
+                      const InputDecoration(labelText: 'Monto a planificar'),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    amount = int.tryParse(value) ?? 0;
+                  },
+                  
+                ),
+                if (type == 'percentage')
+                TextField(
+                  controller: _percentageController,
+                  decoration: const InputDecoration(
+                      labelText: 'Porcentaje a planificar'),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    percentage = int.tryParse(value) ?? 0;
+                  },
+                  
+                ),
+                
               ],
             ),
           ),
@@ -90,5 +96,6 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                 child: const Text('Guardar')),
           ],
         );
+        });
       });
 }

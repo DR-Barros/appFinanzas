@@ -155,6 +155,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                       DataColumn(label: Text('%')),
                       DataColumn(label: Text('Gasto')),
                       DataColumn(label: Text('Diferencia')),
+                      DataColumn(label: Text('editar')),
                     ],
                     rows: plannings
                         .map((planning) => DataRow(cells: <DataCell>[
@@ -168,6 +169,22 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                   Text(planning['realPercentage'].toString())),
                               DataCell(Text(planning['expense'].toString())),
                               DataCell(Text(planning['difference'].toString())),
+                              if (planning['id'] >= 0)
+                                DataCell(IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    showEditPlanningModal(
+                                        context,
+                                        currentDate,
+                                        appController
+                                            .getPlanningsByMouth(currentDate),
+                                        planning['id'], () {
+                                      setState(() {});
+                                    });
+                                  },
+                                ))
+                              else
+                                const DataCell(Text(''))
                             ]))
                         .toList(),
                   ),

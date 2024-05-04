@@ -118,11 +118,14 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                         return;
                       } else if (fromAccount == null) {
                         return;
+                      } else if (type != 'transferencia entre cuentas' ||
+                          type != 'Ahorro') {
+                        toAccount = toAccounts.firstWhere((element) => element.id == -1,);
                       } else if (toAccount == null) {
                         return;
                       } else if (type == '') {
                         return;
-                      }
+                      } 
                       appController.addTransaction(
                           title,
                           amount,

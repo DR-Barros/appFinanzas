@@ -302,6 +302,7 @@ class User {
         List<PlanningItem> planningItems = plan.planningItems;
         List<Map<String, dynamic>> planning = [];
         int totalRealValue = getIncomesByMonth(date);
+        print(totalRealValue);
         for (PlanningItem item in planningItems) {
           planning.add({
             'id': item.id,
@@ -314,14 +315,14 @@ class User {
                     : ((item.value * 10000) / plan.planningIncome).round() /
                         100,
             'planningValue': item.type == 'percentage'
-                ? (item.value * plan.planningIncome) / 100
+                ? ((item.value * plan.planningIncome) / 100).round()
                 : item.value,
             'realValue': item.type == 'percentage'
-                ? (item.value * totalRealValue) / 100
+                ? ((item.value * totalRealValue) / 100).round()
                 : item.value,
             'realPercentage': item.type == 'percentage'
                 ? item.value
-                : plan.planningIncome == 0
+                : totalRealValue == 0
                     ? 0
                     : ((item.value * 10000) / totalRealValue).round() / 100,
             'expense': getTotalTransactionsByMonthAndType(date, item.name),
@@ -332,6 +333,11 @@ class User {
                     getTotalTransactionsByMonthAndType(date, item.name),
           });
         }
+        int realValue = planning.fold(
+            0,
+            (previousValue, element) =>
+                previousValue + int.parse(element['realValue'].toString()));
+
         planning.add(
           {
             'id': -1,
@@ -351,11 +357,7 @@ class User {
                     0,
                     (previousValue, element) =>
                         previousValue + element['planningValue']),
-            'realValue': totalRealValue -
-                planning.fold(
-                    0,
-                    (previousValue, element) =>
-                        previousValue + element['realValue']),
+            'realValue': totalRealValue - realValue,
             'realPercentage': ((100 -
                             planning.fold(
                                 0,
@@ -366,9 +368,13 @@ class User {
                     .round() /
                 100,
             'expense': getTotalTransactionsByMonthAndType(date, 'Ahorro'),
-            'difference': 0,
+            'difference': totalRealValue - realValue - getTotalTransactionsByMonthAndType(date, 'Ahorro'),
           },
         );
+        int totalExpense = 0;
+        for (Map<String, dynamic> item in planning) {
+          totalExpense += int.parse(item['expense'].toString());
+        }
         planning.add(
           {
             'id': -2,
@@ -378,8 +384,8 @@ class User {
             'planningValue': plan.planningIncome,
             'realValue': totalRealValue,
             'realPercentage': 100,
-            'expense': getAmountOfTransactionsByMonth(date),
-            'difference': totalRealValue - getAmountOfTransactionsByMonth(date),
+            'expense': totalExpense,
+            'difference': totalRealValue - totalExpense,
           },
         );
         return planning;
