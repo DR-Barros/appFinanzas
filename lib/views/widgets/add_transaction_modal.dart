@@ -36,101 +36,108 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
   showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Agregar transacción'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  decoration: const InputDecoration(labelText: 'Concepto'),
-                  onChanged: (value) {
-                    title = value;
-                  },
+        return StatefulBuilder(builder: (context, setState){
+            return AlertDialog(
+              title: const Text('Agregar transacción'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      decoration: const InputDecoration(labelText: 'Concepto'),
+                      onChanged: (value) {
+                        title = value;
+                      },
+                    ),
+                    TextField(
+                      decoration: const InputDecoration(labelText: 'Monto'),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        amount = int.parse(value);
+                      },
+                    ),
+                    DateInputField(controller: _dateController),
+                    DropdownButtonFormField(
+                        items: typeTransaction
+                            .map((transaction) => DropdownMenuItem(
+                                  value: transaction.name,
+                                  child: Text(transaction.name),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            type = value.toString();
+                          });
+                        },
+                        decoration: const InputDecoration(
+                            labelText: 'Tipo de transacción')),
+                    DropdownButtonFormField(
+                      items: accounts
+                          .map((account) => DropdownMenuItem(
+                                value: account,
+                                child: Text(account.name),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        fromAccount = value;
+                      },
+                      decoration: const InputDecoration(labelText: 'Cuenta origen'),
+                      validator: (value) => value == toAccount
+                          ? 'La cuenta origen no puede ser la misma que la cuenta destino'
+                          : null,
+                    ),
+                    if (type == 'transferencia entre cuentas' || type == 'Ahorro')
+                      DropdownButtonFormField(
+                        items: toAccounts
+                            .map((account) => DropdownMenuItem(
+                                  value: account,
+                                  child: Text(account.name),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          toAccount = value;
+                        },
+                        decoration:
+                            const InputDecoration(labelText: 'Cuenta destino'),
+                        validator: (value) => value == fromAccount
+                            ? 'La cuenta destino no puede ser la misma que la cuenta origen'
+                            : null,
+                      ),
+                  ],
                 ),
-                TextField(
-                  decoration: const InputDecoration(labelText: 'Monto'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    amount = int.parse(value);
-                  },
-                ),
-                DateInputField(controller: _dateController),
-                DropdownButtonFormField(
-                    items: typeTransaction
-                        .map((transaction) => DropdownMenuItem(
-                              value: transaction.name,
-                              child: Text(transaction.name),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      type = value as String;
+              ),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
                     },
-                    decoration: const InputDecoration(
-                        labelText: 'Tipo de transacción')),
-                DropdownButtonFormField(
-                  items: accounts
-                      .map((account) => DropdownMenuItem(
-                            value: account,
-                            child: Text(account.name),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    fromAccount = value;
-                  },
-                  decoration: const InputDecoration(labelText: 'Cuenta origen'),
-                  validator: (value) => value == toAccount
-                      ? 'La cuenta origen no puede ser la misma que la cuenta destino'
-                      : null,
-                ),
-                DropdownButtonFormField(
-                  items: toAccounts
-                      .map((account) => DropdownMenuItem(
-                            value: account,
-                            child: Text(account.name),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    toAccount = value;
-                  },
-                  decoration:
-                      const InputDecoration(labelText: 'Cuenta destino'),
-                  validator: (value) => value == fromAccount
-                      ? 'La cuenta destino no puede ser la misma que la cuenta origen'
-                      : null,
-                ),
+                    child: const Text('Cancelar')),
+                TextButton(
+                    onPressed: () {
+                      if (title.isEmpty || amount == 0) {
+                        return;
+                      } else if (fromAccount == null) {
+                        return;
+                      } else if (toAccount == null) {
+                        return;
+                      } else if (type == '') {
+                        return;
+                      }
+                      appController.addTransaction(
+                          title,
+                          amount,
+                          DateTime.parse(_dateController.text),
+                          fromAccount,
+                          toAccount,
+                          type);
+                      callback();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Agregar')),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancelar')),
-            TextButton(
-                onPressed: () {
-                  if (title.isEmpty || amount == 0) {
-                    return;
-                  } else if (fromAccount == null) {
-                    return;
-                  } else if (toAccount == null) {
-                    return;
-                  } else if (type == '') {
-                    return;
-                  }
-                  appController.addTransaction(
-                      title,
-                      amount,
-                      DateTime.parse(_dateController.text),
-                      fromAccount,
-                      toAccount,
-                      type);
-                  callback();
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Agregar')),
-          ],
-        );
-      });
+            );
+        });
+      }
+      
+      );
 }

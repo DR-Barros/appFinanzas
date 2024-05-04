@@ -7,83 +7,115 @@ void showAddPlanningModal(
   String name = '';
   int amount = 0;
   int percentage = 0;
-  String type = 'fixed';
+  String type = 'none';
 
   showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Agregar item a la planificación'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  decoration:
-                      const InputDecoration(labelText: 'Item de planificación'),
-                  keyboardType: TextInputType.text,
-                  onChanged: (value) {
-                    name = value;
-                  },
-                ),
-                TextField(
-                  decoration:
-                      const InputDecoration(labelText: 'Monto a planificar'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    amount = int.parse(value);
-                    if (money != 0) {
-                      percentage = (amount * 100) ~/ money;
-                    } else {
-                      percentage = 0;
-                    }
-                  },
-                ),
-                TextField(
-                    decoration: const InputDecoration(
-                        labelText: 'Porcentaje a planificar'),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      percentage = int.parse(value);
-                      amount = (money * percentage) ~/ 100;
-                    }),
-                DropdownButtonFormField(
-                  items: const [
-                     DropdownMenuItem(
-                      value: 'fixed',
-                      child: Text('Valor fijo'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Agregar item a la planificación'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      decoration:
+                          const InputDecoration(labelText: 'Item de planificación'),
+                      keyboardType: TextInputType.text,
+                      onChanged: (value) {
+                        name = value;
+                      },
                     ),
-                    DropdownMenuItem(
-                      value: 'percentage',
-                      child: Text('Porcentaje'),
+                    DropdownButtonFormField(
+                      value: type,
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'none',
+                          child: Text('Seleccione un tipo'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'fixed',
+                          child: Text('Valor fijo'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'percentage',
+                          child: Text('Porcentaje'),
+                        ),
+                      ],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          type = newValue!;
+                        });
+                      },
+                      decoration:
+                          const InputDecoration(labelText: 'Tipo de planificación'),
+                    ),
+                    if (type == 'fixed')
+                      TextField(
+                        decoration:
+                            const InputDecoration(labelText: 'Monto a planificar'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          amount = int.parse(value);
+                          if (money != 0) {
+                            percentage = (amount * 100) ~/ money;
+                          } else {
+                            percentage = 0;
+                          }
+                        },
+                      ),
+                    if (type == 'percentage')
+                      TextField(
+                          decoration: const InputDecoration(
+                              labelText: 'Porcentaje a planificar'),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            percentage = int.parse(value);
+                            amount = (money * percentage) ~/ 100;
+                          }),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (name.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Ingrese un nombre')));
+                          return;
+                        }
+                        if (type == 'none') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Seleccione un tipo')));
+                          return;
+                        } else if (type == 'fixed' && amount == 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Ingrese un monto')));
+                          return;
+                        } else if (type == 'percentage' && percentage == 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Ingrese un porcentaje')));
+                          return;
+                        }
+
+                        appController.addPlanningItem(
+                            name, amount, type, percentage, time);
+                        callback();
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Agregar'),
                     ),
                   ],
-                  onChanged: (value) {
-                    type = value as String;
-                  },
-                  decoration:
-                      const InputDecoration(labelText: 'Tipo de planificación'),
                 ),
-                ElevatedButton(
+              ),
+              actions: <Widget>[
+                TextButton(
                   onPressed: () {
-                    appController.addPlanningItem(
-                        name, amount, type, percentage, time);
-                    callback();
                     Navigator.pop(context);
                   },
-                  child: const Text('Agregar'),
+                  child: const Text('Cancelar'),
                 ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancelar'),
-            ),
-          ],
+            );
+          },
         );
       });
 }

@@ -6,47 +6,38 @@ void main() {
   group('Account Model Tests', () {
     // Test para verificar la creación directa de una instancia de Account.
     test('Account is created with expected values (without transactions)', () {
-      final account = Account(
+      final account1 = Account(
         id: 1,
         name: 'John Doe',
-        balance: 100,
+      );
+      final account2 = Account(
+        id: 2,
+        name: 'Jane Doe',
+        type: AccountType.credit,
+      );
+      final account3 = Account(
+        id: 3,
+        name: 'John Smith',
+        type: AccountType.savings,
+      );
+      final account4 = Account(
+        id: 4,
+        name: 'Jane Smith',
+        type: AccountType.current,
       );
 
-      expect(account.id, 1);
-      expect(account.name, 'John Doe');
-      expect(account.balance, 100);
-      expect(account.transactions, isEmpty);
-      expect(account.type, 'current');
-    });
-
-    // Test para verificar la creación de una instancia de Account con transacciones.
-    test('Account is created with expected values (with transactions)', () {
-      final transaction1 = Transaction(
-        id: '1',
-        title: 'Payment',
-        amount: 50,
-        date: DateTime.now(),
-        toAccountID: 2,
-      );
-      final transaction2 = Transaction(
-        id: '2',
-        title: 'Transfer',
-        amount: 25,
-        date: DateTime.now(),
-        toAccountID: 2,
-      );
-      final account = Account(
-          id: 1,
-          name: 'John Doe',
-          balance: 100,
-          transactions: [transaction1, transaction2],
-          type: "savings");
-
-      expect(account.id, 1);
-      expect(account.name, 'John Doe');
-      expect(account.balance, 100);
-      expect(account.transactions, [transaction1, transaction2]);
-      expect(account.type, 'savings');
+      expect(account1.id, 1);
+      expect(account1.name, 'John Doe');
+      expect(account1.type, AccountType.current);
+      expect(account2.id, 2);
+      expect(account2.name, 'Jane Doe');
+      expect(account2.type, AccountType.credit);
+      expect(account3.id, 3);
+      expect(account3.name, 'John Smith');
+      expect(account3.type, AccountType.savings);
+      expect(account4.id, 4);
+      expect(account4.name, 'Jane Smith');
+      expect(account4.type, AccountType.current);
     });
 
     // Test para verificar la creación de una instancia de Account a partir de un mapa JSON.
@@ -54,52 +45,13 @@ void main() {
       final accountJson = {
         'id': 1,
         'name': 'John Doe',
-        'balance': 100,
-        'transactions': [],
         'type': 'current',
       };
       final account = Account.fromJson(accountJson);
 
       expect(account.id, 1);
       expect(account.name, 'John Doe');
-      expect(account.balance, 100);
-      expect(account.transactions, isEmpty);
-      expect(account.type, 'current');
-    });
-
-    test('Account is created from JSON (with transactions)', () {
-      final transaction1Json = {
-        'id': '1',
-        'title': 'Payment',
-        'amount': 50,
-        'date': DateTime.now().toIso8601String(),
-        'toAccountID': 2,
-        'type': 'income',
-      };
-      final transaction2Json = {
-        'id': '2',
-        'title': 'Transfer',
-        'amount': 25,
-        'date': DateTime.now().toIso8601String(),
-        'toAccountID': 2,
-        'type': 'expense',
-      };
-      final accountJson = {
-        'id': 1,
-        'name': 'John Doe',
-        'balance': 100,
-        'transactions': [transaction1Json, transaction2Json],
-        'type': 'savings',
-      };
-      final account = Account.fromJson(accountJson);
-
-      expect(account.id, 1);
-      expect(account.name, 'John Doe');
-      expect(account.balance, 100);
-      expect(account.transactions.length, 2);
-      expect(account.transactions[0].id, '1');
-      expect(account.transactions[1].id, '2');
-      expect(account.type, 'savings');
+      expect(account.type, AccountType.current);
     });
 
     /// Test para verificar que una instancia de Account es serialized a un mapa JSON.
@@ -107,128 +59,132 @@ void main() {
       final account = Account(
         id: 1,
         name: 'John Doe',
-        balance: 100,
-        transactions: [],
       );
       final accountJson = account.toJson();
 
       expect(accountJson['id'], 1);
       expect(accountJson['name'], 'John Doe');
-      expect(accountJson['balance'], 100);
+      expect(accountJson['type'], 'current');
     });
 
-    test('Account is serialized to JSON (with transactions)', () {
-      final transaction1 = Transaction(
-        id: '1',
-        title: 'Payment',
-        amount: 50,
-        date: DateTime.now(),
-        toAccountID: 2,
-      );
-      final transaction2 = Transaction(
-        id: '2',
-        title: 'Transfer',
-        amount: 25,
-        date: DateTime.now(),
-        toAccountID: 2,
-      );
+    // Test para verificar que el balance de una cuenta es calculado correctamente.
+    test('Account balance is calculated correctly', () {
       final account = Account(
         id: 1,
         name: 'John Doe',
-        balance: 100,
-        transactions: [transaction1, transaction2],
       );
-      final accountJson = account.toJson();
+      final transactions = [
+        Transaction(
+          id: 1,
+          title: "pago1",
+          amount: 100,
+          fromAccountID: 1,
+          toAccountID: 2,
+        ),
+        Transaction(
+          id: 2,
+          title: "pago2",
+          amount: 50,
+          fromAccountID: 2,
+          toAccountID: 1,
+        ),
+        Transaction(
+          id: 3,
+          title: "pago3",
+          amount: 25,
+          fromAccountID: 1,
+          toAccountID: 3,
+        ),
+      ];
 
-      expect(accountJson['id'], 1);
-      expect(accountJson['name'], 'John Doe');
-      expect(accountJson['balance'], 100.0);
-      expect(accountJson['transactions'], isA<List>());
-      expect(accountJson['transactions'].length, 2);
-    });
-
-    // Test para verificar el método addTransaction de la clase Account.
-    test('Transaction is added to the account', () {
-      final transaction = Transaction(
-        id: '1',
-        title: 'Payment',
-        amount: 50,
-        date: DateTime.now(),
-        toAccountID: 2,
-      );
-      final account = Account(
-        id: 1,
-        name: 'John Doe',
-        balance: 100,
-      );
-
-      account.addTransaction(transaction);
-
-      expect(account.transactions, [transaction]);
-      expect(account.balance, 50);
-    });
-
-    // Test para verificar el método addIncome de la clase Account.
-    test('Income is added to the account', () {
-      final transaction = Transaction(
-        id: '1',
-        title: 'Payment',
-        amount: 50,
-        date: DateTime.now(),
+      expect(account.getBalance(transactions), -75);
+      transactions.add(Transaction(
+        id: 4,
+        title: "pago4",
+        amount: 200,
+        fromAccountID: 3,
         toAccountID: 1,
-        type: 'income',
-      );
-      final account = Account(
-        id: 1,
-        name: 'John Doe',
-        balance: 100,
-      );
-
-      account.addIncome(transaction);
-
-      expect(account.transactions, []);
-      expect(account.balance, 150);
-    });
-
-    // Test para verificar el método getTransactionsByMonth de la clase Account.
-    test('Transactions are filtered by month', () {
-      final transaction1 = Transaction(
-        id: '1',
-        title: 'Payment',
-        amount: 50,
-        date: DateTime.now(),
-        toAccountID: 2,
-      );
-      final transaction2 = Transaction(
-        id: '2',
-        title: 'Transfer',
-        amount: 25,
-        date: DateTime.now().subtract(const Duration(days: 60)),
-        toAccountID: 2,
-      );
-      final account = Account(
-        id: 1,
-        name: 'John Doe',
-        balance: 100,
-        transactions: [transaction1, transaction2],
-      );
-
-      final transactions = account.getTransactionsByMonth(DateTime.now());
-
-      expect(transactions, [transaction1]);
-    });
-
-    // Test para verificar el método getBalanceString de la clase Account.
-    test('Balance is formatted as a string', () {
-      final account = Account(
-        id: 1,
-        name: 'John Doe',
-        balance: 100000,
-      );
-
-      final balanceString = account.getBalanceString();
-
-      expect(balanceString, '100.000');
-    });
+      ));
+      expect(account.getBalance(transactions), 125);
   });
+
+    // Test para verificar que el total de transacciones de una cuenta en un mes es calculado correctamente.
+    test('Account total transactions by month is calculated correctly', () {
+      final account = Account(
+        id: 1,
+        name: 'John Doe',
+      );
+      final transactions = [
+        Transaction(
+          id: 1,
+          title: "pago1",
+          amount: 100,
+          fromAccountID: 1,
+          toAccountID: 2,
+          date: DateTime(2021, 1, 1),
+        ),
+        Transaction(
+          id: 2,
+          title: "pago2",
+          amount: 50,
+          fromAccountID: 2,
+          toAccountID: 1,
+          date: DateTime(2021, 1, 1),
+        ),
+        Transaction(
+          id: 3,
+          title: "pago3",
+          amount: 25,
+          fromAccountID: 1,
+          toAccountID: 3,
+          date: DateTime(2021, 2, 1),
+        ),
+      ];
+
+      expect(account.getTotalTransactionsByMonth(DateTime(2021, 1), transactions), 150);
+      expect(account.getTotalTransactionsByMonth(DateTime(2021, 2), transactions), 25);
+    });
+
+    // Test para verificar que el total de transacciones de una cuenta en un mes y tipo es calculado correctamente.
+    test('Account total transactions by month and type is calculated correctly', () {
+      final account = Account(
+        id: 1,
+        name: 'John Doe',
+      );
+      final transactions = [
+        Transaction(
+          id: 1,
+          title: "pago1",
+          amount: 100,
+          fromAccountID: 1,
+          toAccountID: 2,
+          date: DateTime(2021, 1, 1),
+          type: 'income',
+        ),
+        Transaction(
+          id: 2,
+          title: "pago2",
+          amount: 50,
+          fromAccountID: 2,
+          toAccountID: 1,
+          date: DateTime(2021, 1, 1),
+          type: 'expense',
+        ),
+        Transaction(
+          id: 3,
+          title: "pago3",
+          amount: 25,
+          fromAccountID: 1,
+          toAccountID: 3,
+          date: DateTime(2021, 2, 1),
+          type: 'income',
+        ),
+      ];
+
+      expect(account.getTotalTransactionsByMonthAndType(DateTime(2021, 1), 'income', transactions), 100);
+      expect(account.getTotalTransactionsByMonthAndType(DateTime(2021, 1), 'expense', transactions), 50);
+      expect(account.getTotalTransactionsByMonthAndType(DateTime(2021, 2), 'income', transactions), 25);
+    });
+
+});
 }

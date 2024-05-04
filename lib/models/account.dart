@@ -1,24 +1,29 @@
 import 'package:app_finanzas/models/transaction.dart';
 
+enum AccountType { current, savings, credit, nullType }
+
 /*
   This class is used to store the bank account information of the user.
 */
 class Account {
   final int id;
   final String name;
-  final String type;
+  final AccountType type;
 
   Account({
     required this.id,
     required this.name,
-    this.type = 'current',
-  }) {}
+    this.type = AccountType.current,
+  }) {
+    assert(id >= -1, 'Account ID must be greater than or equal to 0');
+    assert(name.isNotEmpty, 'Account name must not be empty');
+  }
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
       id: json['id'],
       name: json['name'],
-      type: json['type'],
+      type: AccountType.values.firstWhere((e)=> e.name == json['type']),
     );
   }
 
@@ -26,7 +31,7 @@ class Account {
     return {
       'id': id,
       'name': name,
-      'type': type,
+      'type': type.name,
     };
   }
 

@@ -172,7 +172,7 @@ class AppController {
   List<Account> getCurrentAccounts() {
     if (user != null) {
       return user!.accounts
-          .where((account) => account.type == 'current')
+          .where((account) => account.type == AccountType.current)
           .map((account) => account)
           .toList();
     } else {
@@ -184,7 +184,7 @@ class AppController {
   List<Account> getCreditAccounts() {
     if (user != null) {
       return user!.accounts
-          .where((account) => account.type == 'credit')
+          .where((account) => account.type == AccountType.credit)
           .map((account) => account)
           .toList();
     } else {
@@ -196,7 +196,7 @@ class AppController {
   List<Account> getSaveAccounts() {
     if (user != null) {
       return user!.accounts
-          .where((account) => account.type == 'savings')
+          .where((account) => account.type == AccountType.savings)
           .map((account) => account)
           .toList();
     } else {
@@ -209,7 +209,7 @@ class AppController {
     if (user != null) {
       return user!.accounts.firstWhere((account) => account.id == id);
     } else {
-      return Account(id: -1, name: 'No account', type: '');
+      return Account(id: -1, name: 'No account', type: AccountType.nullType);
     }
   }
 

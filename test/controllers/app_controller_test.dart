@@ -1,4 +1,5 @@
 import 'package:app_finanzas/models/account.dart';
+import 'package:app_finanzas/models/transaction.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_finanzas/controllers/app_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +19,7 @@ void main() {
     test('AppController is initialized with user', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -29,7 +30,7 @@ void main() {
       expect(controller.user!.email, '');
       expect(controller.user!.password, '');
       expect(controller.user!.accounts, isEmpty);
-      expect(controller.user!.income, isEmpty);
+      expect(controller.user!.transactions, isEmpty);
       expect(controller.user!.plannings, isEmpty);
     });
 
@@ -54,7 +55,7 @@ void main() {
     test('AppController resets user to default user', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -66,7 +67,7 @@ void main() {
       expect(controller.user!.email, '');
       expect(controller.user!.password, '');
       expect(controller.user!.accounts, isEmpty);
-      expect(controller.user!.income, isEmpty);
+      expect(controller.user!.transactions, isEmpty);
       expect(controller.user!.plannings.length, 1);
     });
 
@@ -74,7 +75,7 @@ void main() {
     test('AppController returns user name', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -87,7 +88,7 @@ void main() {
     test('AppController returns user balance', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -105,7 +106,7 @@ void main() {
     test('AppController returns user save balance', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -120,63 +121,27 @@ void main() {
       expect(balance, 200);
     });
 
-    // Test getBalanceString method.
-    test('AppController returns user balance string', () async {
-      SharedPreferences.setMockInitialValues({
-        'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
-      });
-      final controller = AppController();
-      await controller.init();
-
-      String balance = controller.getBalanceString();
-      expect(balance, '0');
-
-      controller.user!.addAccount('Savings Account', 20000, 'Ahorros');
-
-      balance = controller.getBalanceString();
-      expect(balance, '20.000');
-    });
-
-    // Test getSaveBalanceString method.
-    test('AppController returns user save balance string', () async {
-      SharedPreferences.setMockInitialValues({
-        'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
-      });
-      final controller = AppController();
-      await controller.init();
-
-      String balance = controller.getSaveBalanceString();
-      expect(balance, '0');
-
-      controller.user!.addAccount('Savings Account', 20000, 'Ahorro');
-      controller.user!.addAccount('Checking Account', 10000, 'Corriente');
-
-      balance = controller.getSaveBalanceString();
-      expect(balance, '20.000');
-      expect(controller.getBalanceString(), '30.000');
-    });
-
     // Test addIncome method.
     test('AppController adds income to user', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
+
+      List<Transaction> transactions = controller.user!.transactions;
 
       controller.user!.addAccount('Savings Account', 20000, 'Ahorros');
       controller.addIncome(
           'Salary', 10000, DateTime.now(), controller.user!.accounts[0]);
 
-      expect(controller.user!.income.length, 1);
-      expect(controller.user!.income[0].title, 'Salary');
-      expect(controller.user!.income[0].amount, 10000);
-      expect(controller.user!.income[0].date, isNotNull);
-      expect(controller.user!.income[0].toAccountID, 0);
-      expect(controller.user!.accounts[0].balance, 30000);
+      expect(controller.user!.transactions.length, 1);
+      expect(controller.user!.transactions[0].title, 'Salary');
+      expect(controller.user!.transactions[0].amount, 10000);
+      expect(controller.user!.transactions[0].date, isNotNull);
+      expect(controller.user!.transactions[0].toAccountID, 0);
+      expect(controller.user!.accounts[0].getBalance(transactions), 30000);
       expect(controller.getBalance(), 30000);
     });
 
@@ -184,14 +149,14 @@ void main() {
     test('AppController does not add income with invalid account ID', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
 
       controller.addIncome('Salary', 10000, DateTime.now(), null);
 
-      expect(controller.user!.income.length, 0);
+      expect(controller.user!.transactions.length, 0);
       expect(controller.user!.accounts, isEmpty);
       expect(controller.getBalance(), 0);
     });
@@ -200,7 +165,7 @@ void main() {
     test('AppController adds transaction to user', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -212,8 +177,10 @@ void main() {
       controller.addTransaction(
           'Transfer', 5000, DateTime.now(), account, account2, "savings");
 
-      expect(controller.user!.accounts[0].balance, 15000);
-      expect(controller.user!.accounts[1].balance, 15000);
+      List<Transaction> transactions = controller.user!.transactions;
+
+      expect(controller.user!.accounts[0].getBalance(transactions), 15000);
+      expect(controller.user!.accounts[1].getBalance(transactions), 15000);
       expect(controller.getBalance(), 30000);
     });
 
@@ -222,7 +189,7 @@ void main() {
         () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -238,7 +205,7 @@ void main() {
     test('AppController does not add transaction to -1 account ID', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -248,10 +215,11 @@ void main() {
           5000,
           DateTime.now(),
           controller.user!.accounts[0],
-          Account(id: -1, name: 'Invalid Account', balance: 0, type: 'savings'),
+          Account(id: -1, name: 'Invalid Account', type: AccountType.current),
           "savings");
 
-      expect(controller.user!.accounts[0].balance, 15000);
+      expect(controller.user!.accounts[0].getBalance(controller.user!.transactions),
+          20000);
       expect(controller.getBalance(), 15000);
     });
 
@@ -259,7 +227,7 @@ void main() {
     test('AppController adds account to user', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -275,7 +243,7 @@ void main() {
     test('AppController returns user incomes', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -295,7 +263,7 @@ void main() {
     test('AppController returns user incomes by month', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -320,7 +288,7 @@ void main() {
     test('AppController returns user accounts', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -336,7 +304,7 @@ void main() {
     test('AppController returns user current accounts', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -353,7 +321,7 @@ void main() {
     test('AppController returns user save accounts', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();
@@ -370,7 +338,7 @@ void main() {
     test('AppController returns user transactions by month', () async {
       SharedPreferences.setMockInitialValues({
         'user':
-            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "income":[], "plannings":[]}'
+            '{"id":"1","name":"John Doe","email":"", "password":"", "accounts":[], "transactions":[], "plannings":[]}'
       });
       final controller = AppController();
       await controller.init();

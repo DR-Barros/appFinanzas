@@ -74,11 +74,11 @@ class User {
         id = account.id + 1;
       }
     });
-    String typeAccount = type == 'Ahorro'
-        ? 'savings'
+    AccountType typeAccount = type == 'Ahorro'
+        ? AccountType.savings
         : type == 'Corriente'
-            ? 'current'
-            : 'credit';
+            ? AccountType.current
+            : AccountType.credit;
     final account = Account(
       id: id,
       name: name,
