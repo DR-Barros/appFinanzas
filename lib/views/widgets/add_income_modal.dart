@@ -55,8 +55,74 @@ void showAddIncomeModal(BuildContext context,
                   Navigator.of(context).pop();
                 },
                 child: const Text('Cancelar')),
-            TextButton(
+            ElevatedButton(
                 onPressed: () {
+                  if (title.isEmpty){
+                    showDialog(context: context, builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text('El concepto no puede estar vacío'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Aceptar'),
+                          ),
+                        ],
+                      );
+                    });
+                    return;
+                  } else if (amount == 0){
+                    showDialog(context: context, builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text('El monto no puede ser 0'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Aceptar'),
+                          ),
+                        ],
+                      );
+                    });
+                    return;
+                  } else if (_dateController.text.isEmpty){
+                    showDialog(context: context, builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text('Seleccione una fecha'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Aceptar'),
+                          ),
+                        ],
+                      );
+                    });
+                    return;
+                  } else if (toAccount == null){
+                    showDialog(context: context, builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text('Seleccione una cuenta'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Aceptar'),
+                          ),
+                        ],
+                      );
+                    });
+                    return;
+                  }
+                  
                   appController.addIncome(title, amount,
                       DateTime.parse(_dateController.text), toAccount!);
                   callback();

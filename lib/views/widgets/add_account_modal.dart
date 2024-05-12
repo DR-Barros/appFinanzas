@@ -55,8 +55,27 @@ void showAddAccountModal(BuildContext context, VoidCallback callback) {
                   Navigator.of(context).pop();
                 },
                 child: const Text('Cancelar')),
-            TextButton(
+            ElevatedButton(
                 onPressed: () {
+                  if (name.isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Error'),
+                          content: const Text('El nombre no puede estar vacío'),
+                          actions: <Widget>[
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar')),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
                   appController.addAccount(name, balance, type);
                   callback();
                   Navigator.of(context).pop();

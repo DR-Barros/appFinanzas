@@ -75,34 +75,6 @@ void showAddPlanningModal(
                             percentage = int.parse(value);
                             amount = (money * percentage) ~/ 100;
                           }),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (name.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Ingrese un nombre')));
-                          return;
-                        }
-                        if (type == 'none') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Seleccione un tipo')));
-                          return;
-                        } else if (type == 'fixed' && amount == 0) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Ingrese un monto')));
-                          return;
-                        } else if (type == 'percentage' && percentage == 0) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Ingrese un porcentaje')));
-                          return;
-                        }
-
-                        appController.addPlanningItem(
-                            name, amount, type, percentage, time);
-                        callback();
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Agregar'),
-                    ),
                   ],
                 ),
               ),
@@ -112,6 +84,84 @@ void showAddPlanningModal(
                     Navigator.pop(context);
                   },
                   child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                        if (name.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: const Text('Ingrese un nombre'),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Aceptar')),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
+                        if (type == 'none') {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: const Text('Seleccione un tipo de planificación'),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Aceptar')),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        } else if (type == 'fixed' && amount == 0) {
+                          showDialog(context: context, builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text('Ingrese un monto'),
+                              actions: <Widget>[
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Aceptar')),
+                              ],
+                            );
+                          });
+                          return;
+                        } else if (type == 'percentage' && percentage == 0) {
+                          showDialog(context: context, builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text('Ingrese un porcentaje'),
+                              actions: <Widget>[
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Aceptar')),
+                              ],
+                            );
+                          });
+                          return;
+                        }
+
+                        appController.addPlanningItem(
+                            name, amount, type, percentage, time);
+                        callback();
+                        Navigator.pop(context);
+                      },
+                  child: const Text('Agregar'),
                 ),
               ],
             );

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:app_finanzas/models/account.dart';
 import 'package:app_finanzas/models/planning.dart';
 import 'package:app_finanzas/models/user.dart';
@@ -25,7 +26,19 @@ class AppController {
 
   // Method to initialize the controller.
   Future<void> init() async {
-    await getUser();
+    await getData();
+  }
+
+  /// Method to get the controller data from local storage.
+  Future<void> getData() async {
+    final data = await SharedPreferences.getInstance();
+    final showPlaningState = data.getBool('showPlanningIncome');
+    if (showPlaningState != null) {
+      showPlanningIncome = showPlaningState;
+    } else {
+      showPlanningIncome = false;
+    }
+    getUser();
   }
 
   // Method to get the user from local storage.
@@ -54,11 +67,12 @@ class AppController {
     }
   }
 
-  // Method to save the user to local storage.
+  /// Method to save the user to local storage.
   Future<void> saveUser() async {
     final data = await SharedPreferences.getInstance();
     final userJson = json.encode(user!.toJson());
     await data.setString('user', userJson);
+    await data.setBool('showPlanningIncome', showPlanningIncome);
   }
 
   // Method to reset the user to the default user.

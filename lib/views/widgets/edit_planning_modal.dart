@@ -86,7 +86,7 @@ void showEditPlanningModal(BuildContext context, DateTime currentDate,
                   Navigator.pop(context);
                 },
                 child: const Text('Cancelar')),
-            TextButton(
+            ElevatedButton(
                 onPressed: () {
                   appController.updatePlanningItem(currentDate,
                       id, name, type, percentage, amount);

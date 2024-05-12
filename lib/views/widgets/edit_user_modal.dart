@@ -54,7 +54,7 @@ void showEditUserModal(BuildContext context, Function callback) {
             },
             child: const Text('Cancelar'),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               user.update(name, email, password);
               appController.saveUser();

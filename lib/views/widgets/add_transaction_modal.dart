@@ -122,18 +122,77 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                       Navigator.of(context).pop();
                     },
                     child: const Text('Cancelar')),
-                TextButton(
+                ElevatedButton(
                     onPressed: () {
                       if (title.isEmpty || amount == 0) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text(
+                                  'El concepto y el monto no pueden estar vacíos'),
+                              actions: <Widget>[
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Aceptar')),
+                              ],
+                            );
+                          },
+                        );
                         return;
                       } else if (fromAccount == null) {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text('Seleccione una cuenta origen'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          );
+                        });
                         return;
                       } else if (type != 'transferencia entre cuentas' ||
                           type != 'Ahorro') {
                         toAccount = toAccounts.firstWhere((element) => element.id == -1,);
                       } else if (toAccount == null) {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text('Seleccione una cuenta destino'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          );
+                        });
                         return;
                       } else if (type == '') {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text('Seleccione un tipo de transacción'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          );
+                        });
                         return;
                       } 
                       if (installment > 0){

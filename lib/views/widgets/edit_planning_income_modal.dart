@@ -36,7 +36,7 @@ void ShowEditPlanningIncomeModal(
               },
               child: const Text('Cancelar'),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 appController.editPlanningIncome(time, amount);
                 callback();
