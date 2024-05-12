@@ -1,4 +1,5 @@
 import 'package:app_finanzas/models/transaction.dart';
+import 'package:flutter/foundation.dart';
 
 enum AccountType { current, savings, credit, nullType }
 
@@ -39,8 +40,10 @@ class Account {
     int balance = 0;
     for (Transaction transaction in transactions) {
       if (transaction.toAccountID == id) {
+        debugPrint('Transaction to account: $id with amount: ${transaction.amount}');
         balance += transaction.amount;
       } else if (transaction.fromAccountID == id) {
+        debugPrint('Transaction from account: $id with amount: ${transaction.amount}');
         balance -= transaction.amount;
       }
     }

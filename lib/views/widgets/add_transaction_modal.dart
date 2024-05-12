@@ -14,12 +14,6 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
   Account? fromAccount;
   String type = '';
   int installment = 0; // numero de cuotas
-  // agregamos una cuenta "pago" con id -1 para que el usuario pueda seleccionar que no se va a transferir a ninguna cuenta
-  List<Account> toAccounts = List.from(accounts);
-  toAccounts.add(Account(
-    id: -1,
-    name: 'Pago',
-  ));
   //List<PlanningItem> typeTransaction = appController.getPlanningsByMouth(date);
   // quiero que typeTransaction sea una copia de la lista de plannings, pero que no se modifique la lista original
 
@@ -90,7 +84,7 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                     ),
                     if (type == 'transferencia entre cuentas' || type == 'Ahorro')
                       DropdownButtonFormField(
-                        items: toAccounts
+                        items: accounts
                             .map((account) => DropdownMenuItem(
                                   value: account,
                                   child: Text(account.name),
@@ -159,9 +153,10 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                           );
                         });
                         return;
-                      } else if (type != 'transferencia entre cuentas' ||
+                      } else if (type != 'transferencia entre cuentas' &&
                           type != 'Ahorro') {
-                        toAccount = toAccounts.firstWhere((element) => element.id == -1,);
+                          debugPrint('corrigiendo error de tipo: $type');
+                          toAccount = Account(id: -1, name: 'Pago');
                       } else if (toAccount == null) {
                         showDialog(context: context, builder: (context) {
                           return AlertDialog(
@@ -194,7 +189,24 @@ void showAddTransactionModal(BuildContext context, List<Account> accounts,
                           );
                         });
                         return;
-                      } 
+                      } else if (_dateController.text.isEmpty) {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text('Seleccione una fecha'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          );
+                        });
+                        return;
+                      }
+                      debugPrint('Adding transaction from: ${fromAccount!.id} to: ${toAccount!.id}');
                       if (installment > 0){
                         for (int i = 0; i < installment; i++){
                           DateTime date = DateTime.parse(_dateController.text);
