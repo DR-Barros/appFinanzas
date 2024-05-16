@@ -37,4 +37,4 @@ El proyecto sigue el patrón de diseño Modelo Vista Controlador (MVC):
 * Controladores: Manejan la lógica de la aplicación, gestionando la interacción entre las vistas y los modelos.
 
 ## Licencia
-Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo [LICENSE](LICENSE).
+Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo [LICENSE](LICENSE.md).
