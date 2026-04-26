@@ -9,9 +9,6 @@ App Finanzas es una aplicación móvil diseñada para ayudar a los usuarios a ge
 * **Planificación Financiera:** Ofrece una herramienta de planificación para gestionar ingresos y gastos mensuales, con la capacidad de crear, editar y visualizar elementos de planificación.
 * **Interfaz de Usuario Intuitiva:** Diseño amigable con navegación fácil a través de una barra de navegación inferior.
 
-## Instalación
-Puedes descargar la aplicación desde la Play Store a través del siguiente [enlace](https://play.google.com/store/apps/details?id=com.app_finanzas).
-
 ## Uso
 ###  Pantallas Principales
 1. **Ingresos:** Permite registrar y visualizar los ingresos.
